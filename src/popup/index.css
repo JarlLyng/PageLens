@@ -1,0 +1,23 @@
+/* IAMJARL design tokens — must precede Tailwind so the CSS variables exist.
+   Tokens auto-switch light/dark via prefers-color-scheme. */
+@import '@iamjarl/design-tokens/css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background: var(--ij-color-bg-app);
+  color: var(--ij-color-text-primary);
+  font-family: var(--ij-font-ui);
+}
+
+#root {
+  width: 380px;
+  min-height: 200px;
+}

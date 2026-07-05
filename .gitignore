@@ -1,0 +1,14 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+.vite
+
+# Local / editor / OS
+*.local
+.DS_Store
+*.log
+
+# Claude Code machine-local settings
+.claude/settings.local.json

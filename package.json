@@ -1,0 +1,42 @@
+{
+  "name": "pagelens",
+  "version": "0.1.0",
+  "description": "Chrome extension that estimates the carbon footprint of the current page.",
+  "private": true,
+  "type": "module",
+  "author": "Jarl Lyng",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JarlLyng/PageLens.git"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "icons": "node scripts/generate-icons.mjs"
+  },
+  "dependencies": {
+    "@iamjarl/design-tokens": "github:jarllyng/iamjarl-design",
+    "@tgwf/co2": "^0.16.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tldts": "^6.1.65"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.28",
+    "@types/chrome": "^0.0.270",
+    "@types/node": "^20.17.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.5"
+  }
+}
