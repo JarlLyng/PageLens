@@ -1,5 +1,7 @@
 # PageLens
 
+[![CI](https://github.com/JarlLyng/PageLens/actions/workflows/ci.yml/badge.svg)](https://github.com/JarlLyng/PageLens/actions/workflows/ci.yml)
+
 A Chrome extension (Manifest V3) that estimates the carbon footprint of the page
 you're viewing and turns it into an actionable A–F sustainability score.
 
