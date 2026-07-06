@@ -86,13 +86,30 @@ _(The store build intentionally omits `debugger`; do not request it in the listi
 
 ## Assets checklist
 
-- [ ] **Icon** — 128×128 PNG (already in `public/icons/icon128.png`)
-- [ ] **Screenshots** — at least one; 1280×800 or 640×400 PNG/JPEG.
-      Suggested: the popup on a real site (Eco Score, carbon, hosting, weight,
-      recommendations). Load the unpacked `dist-store/` build, open the popup,
-      and capture it.
-- [ ] **Small promo tile** (optional) — 440×280
-- [ ] **Marquee promo** (optional) — 1400×560
+- [x] **Icon** — 128×128 PNG (`public/icons/icon128.png`)
+- [x] **Small promo tile** (optional) — 440×280
+      (`store-assets/promo-small-440x280.png`)
+- [x] **Marquee promo** (optional) — 1400×560
+      (`store-assets/promo-marquee-1400x560.png`)
+- [ ] **Screenshots** — at least one; 1280×800 or 640×400 PNG. Capture the real
+      popup (see below).
+
+Promo tiles are designed marketing graphics, generated via `npm run og` (in
+`site/`) and committed under `store-assets/`. Screenshots should be **real**
+captures of the running extension — the store can reject fabricated ones.
+
+### How to capture screenshots (2 minutes)
+
+1. `npm run build:store` (produces `dist-store/`)
+2. `chrome://extensions` → Developer mode → **Load unpacked** → select `dist-store/`
+3. Open a content-rich site (e.g. a news article) and click the PageLens icon
+4. With the popup open, capture it:
+   - macOS: `Cmd+Shift+4`, then press `Space`, then click the popup window
+5. Repeat on a couple of sites to show different scores. Pad/scale the image to
+   1280×800 if needed (the store accepts 1280×800 or 640×400).
+
+Good screenshots to include: the full popup (Eco Score + carbon + hosting),
+and one scrolled to the recommendations list.
 
 ## Submission steps
 
