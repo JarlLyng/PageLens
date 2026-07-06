@@ -6,8 +6,10 @@
     <title>PageLens — See the carbon footprint of any web page</title>
     <meta
       name="description"
-      content="PageLens is a Chrome extension that estimates a web page's carbon footprint and turns it into an actionable A–F Eco Score."
+      content="PageLens is a free Chrome extension that estimates a web page's carbon footprint and turns it into an actionable A–F Eco Score, with recommendations to make the page lighter."
     />
+    <link rel="canonical" href="https://pagelens.iamjarl.com/" />
+    <meta name="robots" content="index, follow" />
 
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -17,6 +19,8 @@
 
     <!-- Open Graph / social -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PageLens" />
+    <meta property="og:locale" content="en" />
     <meta property="og:url" content="https://pagelens.iamjarl.com/" />
     <meta property="og:title" content="PageLens — Website carbon footprint" />
     <meta
@@ -33,6 +37,78 @@
       content="See the carbon footprint of any web page — A–F Eco Score, CO₂ estimate, green-hosting check, and recommendations."
     />
     <meta name="twitter:image" content="https://pagelens.iamjarl.com/og-image.png" />
+    <meta property="og:image:alt" content="PageLens — see the carbon footprint of any web page" />
+
+    <!-- Structured data (read by search engines and AI, no JS needed) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "PageLens",
+        "applicationCategory": "BrowserApplication",
+        "operatingSystem": "Chrome",
+        "url": "https://pagelens.iamjarl.com/",
+        "description": "A free Chrome extension that estimates the carbon footprint of any web page and turns it into an actionable A–F Eco Score, with recommendations to make the page lighter.",
+        "author": { "@type": "Person", "name": "Jarl Lyng" },
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is PageLens?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PageLens is a free Chrome extension that estimates the carbon footprint of any web page and turns it into an actionable A–F Eco Score, with concrete recommendations to make the page lighter."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does PageLens estimate CO2 emissions?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It measures the bytes transferred when a page loads and applies CO2.js (the Sustainable Web Design model) from The Green Web Foundation, adjusting the estimate for whether the site is hosted on green energy."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is the Eco Score calculated?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Eco Score is a 0–100 rating, graded A–F, that blends four factors: carbon per view (40%), page weight (30%), green hosting (15%) and best practices (15%)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is PageLens free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. PageLens is completely free to use and open about how its score is calculated."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does PageLens collect my data?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. PageLens analyzes the current page locally in your browser. Only the site's hostname is sent to The Green Web Foundation to check for green hosting. There is no tracking, no analytics, and no account required."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is the carbon estimate exact?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No — it is an actionable estimate, not a precise measurement. PageLens is transparent about its methodology and clearly flags any figure it has to approximate."
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
