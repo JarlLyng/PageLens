@@ -35,6 +35,19 @@ Toolbar icons are generated (no binary assets in the repo) by
 `scripts/generate-icons.mjs`, a dependency-free PNG encoder that draws the
 brand-purple lens mark at 16/32/48/128 px.
 
+## Chrome Web Store
+
+The published build omits the `debugger` permission (and deep scan) for faster
+review:
+
+```bash
+npm run package:store   # → pagelens-store.zip from a debugger-free dist-store/
+```
+
+See [docs/chrome-store-listing.md](docs/chrome-store-listing.md) for the full
+submission guide and listing copy, and [PRIVACY.md](PRIVACY.md) /
+[the hosted policy](https://jarllyng.github.io/PageLens/privacy.html).
+
 ## Load the extension in Chrome
 
 1. Run `npm run dev` (or `npm run build`).

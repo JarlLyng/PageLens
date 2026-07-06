@@ -1,6 +1,11 @@
 import { defineManifest } from '@crxjs/vite-plugin'
 import pkg from './package.json'
 
+// Store build omits `debugger` (and the deep-scan feature) for faster review.
+const isStore = process.env.PAGELENS_STORE === '1'
+const permissions = ['activeTab', 'scripting', 'storage']
+if (!isStore) permissions.push('debugger')
+
 export default defineManifest({
   manifest_version: 3,
   name: 'PageLens',
@@ -26,6 +31,6 @@ export default defineManifest({
     service_worker: 'src/background/service-worker.ts',
     type: 'module',
   },
-  permissions: ['activeTab', 'scripting', 'storage', 'debugger'],
+  permissions,
   host_permissions: ['https://api.thegreenwebfoundation.org/*'],
 })

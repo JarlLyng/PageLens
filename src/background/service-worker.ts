@@ -14,7 +14,6 @@ import {
 } from '@/core/recommendations'
 import { computeEcoScore } from '@/core/score'
 import { collectPageResources } from '@/content/collector'
-import { runDeepScan } from './deep-scan'
 import { checkGreenHosting } from '@/lib/greenweb'
 import { getMonthlyVisits } from '@/lib/settings'
 import type {
@@ -92,6 +91,11 @@ async function quickScan(tabId: number): Promise<AnalysisSnapshot> {
 }
 
 async function deepScan(tabId: number): Promise<AnalysisSnapshot> {
+  // Guarding the dynamic import with the compile-time flag makes the import()
+  // unreachable in the store build, so Rollup drops the deep-scan chunk (and all
+  // chrome.debugger code) entirely.
+  if (__STORE_BUILD__) throw new Error('Deep scan is not available in this build.')
+  const { runDeepScan } = await import('./deep-scan')
   const { raw, scripts, cssRules, cssSheets } = await runDeepScan(tabId)
   return buildSnapshot(
     raw,
@@ -103,7 +107,7 @@ async function deepScan(tabId: number): Promise<AnalysisSnapshot> {
 chrome.runtime.onMessage.addListener(
   (request: PageLensRequest, _sender, sendResponse) => {
     const work =
-      request.type === 'DEEP_SCAN'
+      request.type === 'DEEP_SCAN' && !__STORE_BUILD__
         ? deepScan(request.tabId)
         : request.type === 'ANALYZE'
           ? quickScan(request.tabId)

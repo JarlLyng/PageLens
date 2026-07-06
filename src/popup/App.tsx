@@ -78,7 +78,7 @@ export function App() {
           <ScanModeBar
             scanMode={state.snapshot.scanMode}
             coverage={state.snapshot.coverage}
-            onDeepScan={runDeepScan}
+            onDeepScan={__STORE_BUILD__ ? undefined : runDeepScan}
           />
           <EcoScoreCard score={state.snapshot.score} />
           <CarbonEstimateCard

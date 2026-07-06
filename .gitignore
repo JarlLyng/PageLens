@@ -3,6 +3,8 @@ node_modules
 
 # Build output
 dist
+dist-store
+*.zip
 .vite
 
 # Local / editor / OS

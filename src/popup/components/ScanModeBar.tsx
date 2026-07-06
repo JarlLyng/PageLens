@@ -4,7 +4,8 @@ import type { CoverageSummary, ScanMode } from '@/core/types'
 interface Props {
   scanMode: ScanMode
   coverage: CoverageSummary | null
-  onDeepScan: () => void
+  /** When omitted (e.g. the store build), no deep-scan button is shown. */
+  onDeepScan?: () => void
 }
 
 export function ScanModeBar({ scanMode, coverage, onDeepScan }: Props) {
@@ -28,6 +29,15 @@ export function ScanModeBar({ scanMode, coverage, onDeepScan }: Props) {
             {formatBytes(coverage.totalCssBytes)})
           </span>
         )}
+      </div>
+    )
+  }
+
+  // Store build: no deep scan available → just label the scan mode.
+  if (!onDeepScan) {
+    return (
+      <div className="rounded-ij-sm bg-ij-muted px-2.5 py-2 text-xs text-ij-text-secondary">
+        Quick scan · some cross-origin bytes estimated
       </div>
     )
   }

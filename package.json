@@ -13,6 +13,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:store": "tsc --noEmit && PAGELENS_STORE=1 vite build",
+    "package:store": "npm run build:store && cd dist-store && zip -qr ../pagelens-store.zip . && cd .. && echo 'Packaged → pagelens-store.zip'",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
