@@ -40,4 +40,4 @@ We do not collect, store, share, or sell any personal information.
 
 ## Contact
 
-Open an issue on the [PageLens GitHub repository](https://github.com/JarlLyng/PageLens).
+Questions about your privacy? Email us at [privacy@iamjarl.com](mailto:privacy@iamjarl.com).

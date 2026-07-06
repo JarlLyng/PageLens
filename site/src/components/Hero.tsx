@@ -1,7 +1,5 @@
 import { PopupMock } from './PopupMock'
 
-const REPO_URL = 'https://github.com/JarlLyng/PageLens'
-
 export function Hero() {
   return (
     <header className="border-b border-ij-border">
@@ -13,10 +11,10 @@ export function Hero() {
           <span className="text-lg font-semibold">PageLens</span>
         </div>
         <a
-          href={REPO_URL}
+          href="#how"
           className="text-sm font-medium text-ij-text-secondary transition-colors hover:text-ij-text"
         >
-          GitHub ↗
+          How it works
         </a>
       </nav>
 
@@ -34,12 +32,9 @@ export function Hero() {
             the web lighter.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <a
-              href={REPO_URL}
-              className="rounded-ij-md bg-ij-primary px-5 py-3 font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
-            >
-              Get PageLens
-            </a>
+            <span className="rounded-ij-md bg-ij-muted px-5 py-3 font-semibold text-ij-text-secondary">
+              Coming soon on the Chrome Web Store
+            </span>
             <a
               href="#how"
               className="rounded-ij-md border border-ij-border px-5 py-3 font-semibold text-ij-text transition-colors hover:border-ij-border-strong"

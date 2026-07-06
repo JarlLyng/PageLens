@@ -4,7 +4,7 @@
   "description": "Chrome extension that estimates the carbon footprint of the current page.",
   "private": true,
   "type": "module",
-  "author": "Jarl Lyng",
+  "author": "IAMJARL",
   "license": "UNLICENSED",
   "repository": {
     "type": "git",

@@ -1,5 +1,3 @@
-const REPO_URL = 'https://github.com/JarlLyng/PageLens'
-
 export function Footer() {
   return (
     <footer className="border-t border-ij-border">
@@ -11,8 +9,11 @@ export function Footer() {
           <span>PageLens</span>
         </div>
         <nav className="flex flex-wrap items-center gap-5">
-          <a href={REPO_URL} className="transition-colors hover:text-ij-text">
-            GitHub
+          <a href="#faq" className="transition-colors hover:text-ij-text">
+            FAQ
+          </a>
+          <a href="/privacy.html" className="transition-colors hover:text-ij-text">
+            Privacy
           </a>
           <a
             href="https://www.thegreenwebfoundation.org/co2-js/"
@@ -20,15 +21,9 @@ export function Footer() {
           >
             CO2.js
           </a>
-          <a
-            href="https://www.thegreenwebfoundation.org/"
-            className="transition-colors hover:text-ij-text"
-          >
-            Green Web Foundation
-          </a>
         </nav>
         <span className="text-ij-text-tertiary">
-          © {new Date().getFullYear()} Jarl Lyng
+          © {new Date().getFullYear()} IAMJARL
         </span>
       </div>
     </footer>
