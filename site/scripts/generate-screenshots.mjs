@@ -140,10 +140,82 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800">
   ${card}
 </svg>`
 
-const resvg = new Resvg(svg, {
-  fitTo: { mode: 'width', value: 1280 },
-  font: { loadSystemFonts: true, defaultFontFamily: 'Arial' },
-})
+// --- Screenshot 2: recommendations-focused ---
+const BADGE = {
+  HIGH: ['#fdeaea', '#d00000'],
+  MEDIUM: ['#fff2e8', '#c2410c'],
+  LOW: ['#eef0f2', '#555560'],
+}
+const recs = [
+  ['HIGH', 'Compress oversized images', '~420 KB'],
+  ['HIGH', 'Reduce JavaScript', '~680 KB'],
+  ['MEDIUM', 'Reduce third-party scripts', '~210 KB'],
+  ['MEDIUM', 'Trim web fonts', '~90 KB'],
+  ['LOW', 'Reduce CSS', '~35 KB'],
+]
+const recRows = recs
+  .map(([impact, title, saving], i) => {
+    const y = CY + 185 + i * 72
+    const [bg, fg] = BADGE[impact]
+    const bw = impact === 'MEDIUM' ? 78 : impact === 'HIGH' ? 54 : 46
+    return `
+      <rect x="${px}" y="${y}" width="${CW - 56}" height="64" rx="12" fill="#ffffff" stroke="${C.border}" />
+      <rect x="${px + 16}" y="${y + 21}" width="${bw}" height="22" rx="6" fill="${bg}" />
+      ${t(px + 16 + bw / 2, y + 36, 11, fg, impact, { w: 700, anchor: 'middle' })}
+      ${t(px + 16 + bw + 14, y + 40, 15, C.text, title, { w: 600 })}
+      ${t(pr - 14, y + 40, 13, C.faint, saving, { anchor: 'end' })}`
+  })
+  .join('')
+
+const card2 = `
+  <rect x="${CX + 6}" y="${CY + 12}" width="${CW}" height="${CH}" rx="22" fill="#c9b6da" opacity="0.5" />
+  <rect x="${CX}" y="${CY}" width="${CW}" height="${CH}" rx="22" fill="#ffffff" stroke="${C.border}" />
+
+  <rect x="${px}" y="${CY + 26}" width="32" height="32" rx="8" fill="${C.primary}" />
+  ${t(px + 16, CY + 48, 18, '#ffffff', 'P', { w: 700, anchor: 'middle' })}
+  ${t(px + 44, CY + 49, 20, C.text, 'PageLens', { w: 700 })}
+  ${t(px, CY + 84, 15, C.faint, 'example.com')}
+
+  <rect x="${px}" y="${CY + 100}" width="48" height="48" rx="12" fill="${C.gradeA}" />
+  ${t(px + 24, CY + 133, 26, '#ffffff', 'A', { w: 700, anchor: 'middle' })}
+  ${t(px + 62, CY + 128, 24, C.text, '86', { w: 700 })}
+  ${t(px + 98, CY + 128, 15, C.faint, '/100 &#183; Eco Score')}
+
+  ${t(px, CY + 172, 16, C.text, 'Recommendations', { w: 700 })}
+  ${recRows}
+`
+
+const svg2 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7f3fd" />
+      <stop offset="1" stop-color="#efe6fb" />
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="800" fill="url(#bg2)" />
+  <circle cx="1180" cy="80" r="220" fill="${C.primary}" opacity="0.10" />
+  <circle cx="120" cy="760" r="200" fill="#D0FF00" opacity="0.10" />
+
+  <rect x="90" y="150" width="200" height="38" rx="19" fill="#ffffff" stroke="${C.border}" />
+  ${t(190, 175, 15, C.primary, 'RECOMMENDATIONS', { w: 700, anchor: 'middle' })}
+  ${t(88, 300, 62, C.text, 'Know what to', { w: 700 })}
+  ${t(88, 372, 62, C.text, 'fix first.', { w: 700 })}
+  ${t(90, 438, 25, C.sub, 'Prioritized, plain-language fixes ranked')}
+  ${t(90, 472, 25, C.sub, 'by impact — images, scripts, fonts &amp; more.')}
+  ${t(90, 700, 24, C.primary, 'pagelens.iamjarl.com', { w: 700 })}
+
+  ${card2}
+</svg>`
+
+function save(svgStr, name) {
+  const r = new Resvg(svgStr, {
+    fitTo: { mode: 'width', value: 1280 },
+    font: { loadSystemFonts: true, defaultFontFamily: 'Arial' },
+  })
+  writeFileSync(resolve(storeDir, name), r.render().asPng())
+}
+
 mkdirSync(storeDir, { recursive: true })
-writeFileSync(resolve(storeDir, 'screenshot-1-1280x800.png'), resvg.render().asPng())
-console.log('Generated store-assets/screenshot-1-1280x800.png')
+save(svg, 'screenshot-1-1280x800.png')
+save(svg2, 'screenshot-2-1280x800.png')
+console.log('Generated screenshot-1-1280x800.png and screenshot-2-1280x800.png')
