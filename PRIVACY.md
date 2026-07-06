@@ -2,7 +2,7 @@
 
 _Last updated: 6 July 2026_
 
-Canonical version: https://jarllyng.github.io/PageLens/privacy.html
+Canonical version: https://pagelens.iamjarl.com/privacy.html
 
 PageLens is a Chrome extension that estimates the carbon footprint of the web
 page you are viewing. It is designed to work without collecting personal data.

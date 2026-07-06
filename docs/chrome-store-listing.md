@@ -19,7 +19,7 @@ Upload that zip in the Developer Dashboard.
 ## One-time setup
 
 - [ ] Register a Chrome Web Store developer account (one-time $5 USD fee)
-- [ ] Have the privacy policy URL ready: https://jarllyng.github.io/PageLens/privacy.html
+- [ ] Have the privacy policy URL ready: https://pagelens.iamjarl.com/privacy.html
 
 ## Listing copy
 

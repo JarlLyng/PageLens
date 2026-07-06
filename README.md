@@ -5,7 +5,7 @@
 A Chrome extension (Manifest V3) that estimates the carbon footprint of the page
 you're viewing and turns it into an actionable A–F sustainability score.
 
-🌐 **Website:** https://jarllyng.github.io/PageLens/ · 📐 **Design:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+🌐 **Website:** https://pagelens.iamjarl.com · 📐 **Design:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 The marketing site lives in [`site/`](site/) (Vite + React, deployed to GitHub
 Pages via [`.github/workflows/deploy-site.yml`](.github/workflows/deploy-site.yml)).
@@ -46,7 +46,7 @@ npm run package:store   # → pagelens-store.zip from a debugger-free dist-store
 
 See [docs/chrome-store-listing.md](docs/chrome-store-listing.md) for the full
 submission guide and listing copy, and [PRIVACY.md](PRIVACY.md) /
-[the hosted policy](https://jarllyng.github.io/PageLens/privacy.html).
+[the hosted policy](https://pagelens.iamjarl.com/privacy.html).
 
 ## Load the extension in Chrome
 
