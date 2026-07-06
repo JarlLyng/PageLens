@@ -25,7 +25,7 @@ analyzed (e.g. `example.com`), sent to
 to check for green hosting.
 
 No page content, full URLs, browsing history, or personal data is transmitted.
-PageLens contains **no analytics, no advertising, and no third-party trackers**.
+The extension contains **no analytics, no advertising, and no third-party trackers**.
 
 ## What is stored
 
@@ -38,6 +38,13 @@ Stored locally via the Chrome Storage API, never uploaded:
 
 We do not collect, store, share, or sell any personal information.
 
+## This website
+
+This policy describes the PageLens browser extension. The PageLens website
+(pagelens.iamjarl.com) uses [Umami](https://umami.is/) — a privacy-friendly,
+cookieless analytics tool — to measure visits in aggregate. It sets no cookies
+and does not collect personal data.
+
 ## Contact
 
-Questions about your privacy? Email us at [privacy@iamjarl.com](mailto:privacy@iamjarl.com).
+Questions about your privacy? Email us at [support@iamjarl.com](mailto:support@iamjarl.com).
