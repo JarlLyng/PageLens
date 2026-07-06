@@ -91,8 +91,9 @@ _(The store build intentionally omits `debugger`; do not request it in the listi
       (`store-assets/promo-small-440x280.png`)
 - [x] **Marquee promo** (optional) — 1400×560
       (`store-assets/promo-marquee-1400x560.png`)
-- [ ] **Screenshots** — at least one; 1280×800 or 640×400 PNG. Capture the real
-      popup (see below).
+- [x] **Screenshot** — a ready 1280×800 rendering of the popup is at
+      `store-assets/screenshot-1-1280x800.png` (regenerate with `npm run shots`).
+      Optionally add real captures too (see below).
 
 Promo tiles are designed marketing graphics, generated via `npm run og` (in
 `site/`) and committed under `store-assets/`. Screenshots should be **real**
