@@ -122,6 +122,37 @@ and one scrolled to the recommendations list.
    (declare: no data sold; only hostname sent for green-hosting check)
 6. Submit for review
 
+## Automated publishing (GitHub Actions)
+
+After the first manual submission, updates publish automatically via
+[`.github/workflows/publish-extension.yml`](../.github/workflows/publish-extension.yml)
+using the Chrome Web Store API.
+
+**One-time setup** — add three repo secrets (reusable across all your
+extensions; copy them from your other extension's repo):
+
+```bash
+gh secret set CHROME_CLIENT_ID
+gh secret set CHROME_CLIENT_SECRET
+gh secret set CHROME_REFRESH_TOKEN
+```
+
+(The extension ID is public and hardcoded in the workflow.)
+
+**To ship an update:**
+
+```bash
+# bump the version in package.json (the manifest reads it), then:
+git commit -am "Release vX.Y.Z"
+git tag vX.Y.Z
+git push --tags
+```
+
+The workflow type-checks, tests, builds the debugger-free store zip, and
+uploads + submits it for review. The version tag must match `package.json`
+(the workflow fails otherwise). You can also run it manually from the Actions
+tab (**workflow_dispatch**).
+
 ## Notes
 
 - Review time varies; the minimal permission set (no `debugger`) should keep it

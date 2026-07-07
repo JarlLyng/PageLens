@@ -1,0 +1,56 @@
+name: Publish extension
+
+# Publishes the store build (no `debugger`) to the Chrome Web Store.
+# Triggered by pushing a version tag (e.g. v1.0.1) or manually.
+#
+# Requires three repo secrets (reusable across all your extensions — copy them
+# from your other extension's repo):
+#   CHROME_CLIENT_ID, CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN
+# The extension ID is public, so it's hardcoded below.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify tag matches package.json version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          PKG=$(node -p "require('./package.json').version")
+          TAG=${GITHUB_REF_NAME#v}
+          if [ "$PKG" != "$TAG" ]; then
+            echo "::error::package.json version ($PKG) does not match tag ($TAG)"
+            exit 1
+          fi
+
+      - name: Type-check & test
+        run: |
+          npm run typecheck
+          npm test
+
+      - name: Build & package store build
+        run: npm run package:store # → pagelens-store.zip (debugger-free)
+
+      - name: Upload & publish to Chrome Web Store
+        env:
+          EXTENSION_ID: mkajolhhjdlpmjlgdfnmbhfpbbeebgja
+          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+        run: npx chrome-webstore-upload-cli@3 upload --source pagelens-store.zip --auto-publish
