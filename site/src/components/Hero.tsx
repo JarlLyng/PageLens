@@ -1,4 +1,5 @@
 import { PopupMock } from './PopupMock'
+import { STORE_URL } from '../config'
 
 export function Hero() {
   return (
@@ -32,9 +33,14 @@ export function Hero() {
             the web lighter.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-ij-md bg-ij-muted px-5 py-3 font-semibold text-ij-text-secondary">
-              Coming soon on the Chrome Web Store
-            </span>
+            <a
+              href={STORE_URL}
+              target="_blank"
+              rel="noopener"
+              className="rounded-ij-md bg-ij-primary px-5 py-3 font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
+            >
+              Add to Chrome — free
+            </a>
             <a
               href="#how"
               className="rounded-ij-md border border-ij-border px-5 py-3 font-semibold text-ij-text transition-colors hover:border-ij-border-strong"

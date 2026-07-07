@@ -5,7 +5,7 @@
 A Chrome extension (Manifest V3) that estimates the carbon footprint of the page
 you're viewing and turns it into an actionable A–F sustainability score.
 
-🌐 **Website:** https://pagelens.iamjarl.com · 📐 **Design:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+🧩 **Install:** [Chrome Web Store](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja) · 🌐 **Website:** https://pagelens.iamjarl.com · 📐 **Design:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 The marketing site lives in [`site/`](site/) (Vite + React, deployed to GitHub
 Pages via [`.github/workflows/deploy-site.yml`](.github/workflows/deploy-site.yml)).
@@ -36,6 +36,8 @@ Toolbar icons are generated (no binary assets in the repo) by
 brand-purple lens mark at 16/32/48/128 px.
 
 ## Chrome Web Store
+
+**Live:** https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja
 
 The published build omits the `debugger` permission (and deep scan) for faster
 review:

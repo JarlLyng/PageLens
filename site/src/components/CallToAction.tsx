@@ -1,3 +1,5 @@
+import { STORE_URL } from '../config'
+
 export function CallToAction() {
   return (
     <section className="mx-auto max-w-content px-6 py-20 text-center">
@@ -7,9 +9,14 @@ export function CallToAction() {
           PageLens gives you an Eco Score for the page you&rsquo;re on in one
           click.
         </p>
-        <span className="inline-block rounded-ij-md bg-ij-on-primary px-6 py-3 font-semibold text-ij-primary">
-          Coming soon on the Chrome Web Store
-        </span>
+        <a
+          href={STORE_URL}
+          target="_blank"
+          rel="noopener"
+          className="inline-block rounded-ij-md bg-ij-on-primary px-6 py-3 font-semibold text-ij-primary transition-transform hover:scale-105"
+        >
+          Add to Chrome — free
+        </a>
       </div>
     </section>
   )

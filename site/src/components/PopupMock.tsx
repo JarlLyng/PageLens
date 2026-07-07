@@ -8,7 +8,7 @@ const SUBSCORES = [
 
 export function PopupMock() {
   return (
-    <div className="w-[340px] shrink-0 rounded-ij-lg border border-ij-border bg-ij-bg p-4 shadow-2xl">
+    <div className="w-full max-w-[340px] rounded-ij-lg border border-ij-border bg-ij-bg p-4 shadow-2xl">
       <div className="mb-4 flex items-center gap-2">
         <span className="grid h-7 w-7 place-items-center rounded-ij-sm bg-ij-primary font-bold text-ij-on-primary">
           P

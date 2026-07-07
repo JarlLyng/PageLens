@@ -1,4 +1,7 @@
+import { STORE_URL } from '../config'
+
 const PAGELENS_LINKS = [
+  { label: 'Add to Chrome', href: STORE_URL },
   { label: 'FAQ', href: '#faq' },
   { label: 'Privacy', href: '/privacy.html' },
 ]
