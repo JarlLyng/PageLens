@@ -1,14 +1,27 @@
-// Tunable thresholds and weights for scoring. Anchored to HTTP Archive medians
-// (~2.2 MB desktop) so a "typical" page lands around a C. Adjust here after
-// calibrating against real sites.
+// Tunable thresholds and weights for scoring.
+//
+// Calibrated against real-world data so the grade distribution is meaningful
+// rather than "everything fails":
+//   - Page weight: HTTP Archive median is ~2.2 MB (desktop).
+//   - Carbon: computed from the CO2.js SWD model, which yields ~0.4 g/MB, so a
+//     median 2.2 MB page is ~0.88 g (grey hosting) / ~0.77 g (green).
+//
+// With the curves below a typical page lands mid-scale, and hosting is the
+// deciding factor at the median (a real, actionable story):
+//   - light + green + clean      → A
+//   - light (any hosting)        → B
+//   - median (2.2 MB) + green    → C   (~78)
+//   - median (2.2 MB) + grey     → D   (~61)
+//   - heavy (5–8 MB)             → E/F
+//   - very heavy (10 MB+)        → F
 
 /** Carbon per view (grams): score 100 at/under best, 0 at/over worst. */
-export const CARBON_BEST_G = 0.1
-export const CARBON_WORST_G = 3.0
+export const CARBON_BEST_G = 0.4
+export const CARBON_WORST_G = 5.0
 
 /** Total transferred bytes: score 100 at/under best, 0 at/over worst. */
-export const WEIGHT_BEST_BYTES = 500 * 1024 // 500 KB
-export const WEIGHT_WORST_BYTES = 5 * 1024 * 1024 // 5 MB
+export const WEIGHT_BEST_BYTES = 1 * 1024 * 1024 // 1 MB
+export const WEIGHT_WORST_BYTES = 15 * 1024 * 1024 // 15 MB
 
 /** Sub-score weights — must sum to 1. */
 export const SCORE_WEIGHTS = {
