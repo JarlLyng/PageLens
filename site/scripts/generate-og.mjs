@@ -65,7 +65,10 @@ writeFileSync(resolve(publicDir, 'og-image.png'), renderToPng(ogSvg, 1200))
 
 // PNG favicon fallbacks from the same mark as favicon.svg
 const faviconSvg = readFileSync(resolve(publicDir, 'favicon.svg'), 'utf8')
-writeFileSync(resolve(publicDir, 'apple-touch-icon.png'), renderToPng(faviconSvg, 180))
+writeFileSync(
+  resolve(publicDir, 'apple-touch-icon.png'),
+  renderToPng(faviconSvg, 180),
+)
 writeFileSync(resolve(publicDir, 'favicon-32.png'), renderToPng(faviconSvg, 32))
 
 // --- Chrome Web Store promo tiles (designed marketing assets) ---
@@ -110,8 +113,16 @@ const smallSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280">
 </svg>`
 
 mkdirSync(storeDir, { recursive: true })
-writeFileSync(resolve(storeDir, 'promo-marquee-1400x560.png'), renderToPng(marqueeSvg, 1400))
-writeFileSync(resolve(storeDir, 'promo-small-440x280.png'), renderToPng(smallSvg, 440))
+writeFileSync(
+  resolve(storeDir, 'promo-marquee-1400x560.png'),
+  renderToPng(marqueeSvg, 1400),
+)
+writeFileSync(
+  resolve(storeDir, 'promo-small-440x280.png'),
+  renderToPng(smallSvg, 440),
+)
 
 console.log('Generated: og-image.png, apple-touch-icon.png, favicon-32.png,')
-console.log('           store-assets/promo-marquee-1400x560.png, store-assets/promo-small-440x280.png')
+console.log(
+  '           store-assets/promo-marquee-1400x560.png, store-assets/promo-small-440x280.png',
+)

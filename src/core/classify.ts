@@ -35,15 +35,21 @@ export function resolveBytes(entry: RawResourceEntry): {
   bytes: number
   estimated: boolean
 } {
-  if (entry.transferSize > 0) return { bytes: entry.transferSize, estimated: false }
+  if (entry.transferSize > 0)
+    return { bytes: entry.transferSize, estimated: false }
   // Cross-origin resources without Timing-Allow-Origin report transferSize 0;
   // approximate from the body sizes and mark the value as estimated.
-  if (entry.encodedBodySize > 0) return { bytes: entry.encodedBodySize, estimated: true }
-  if (entry.decodedBodySize > 0) return { bytes: entry.decodedBodySize, estimated: true }
+  if (entry.encodedBodySize > 0)
+    return { bytes: entry.encodedBodySize, estimated: true }
+  if (entry.decodedBodySize > 0)
+    return { bytes: entry.decodedBodySize, estimated: true }
   return { bytes: 0, estimated: false }
 }
 
-export function categorize(url: string, initiatorType: string): ResourceCategory {
+export function categorize(
+  url: string,
+  initiatorType: string,
+): ResourceCategory {
   let pathname = url
   try {
     pathname = new URL(url).pathname
@@ -81,6 +87,8 @@ export function classifyResource(
 }
 
 /** Classify every fetched resource (excludes the main HTML document). */
-export function classifyResources(raw: RawCollectorResult): ClassifiedResource[] {
+export function classifyResources(
+  raw: RawCollectorResult,
+): ClassifiedResource[] {
   return raw.resources.map((entry) => classifyResource(entry, raw.pageUrl))
 }

@@ -1,7 +1,8 @@
 import { GWF_CACHE_TTL_MS } from '@/core/constants'
 import type { HostingResult } from '@/core/types'
 
-const GREENCHECK_URL = 'https://api.thegreenwebfoundation.org/api/v3/greencheck/'
+const GREENCHECK_URL =
+  'https://api.thegreenwebfoundation.org/api/v3/greencheck/'
 
 interface GreencheckResponse {
   green: boolean

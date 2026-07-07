@@ -7,7 +7,8 @@ export type AnalysisState =
   | { status: 'ready'; snapshot: AnalysisSnapshot }
   | { status: 'error'; message: string }
 
-const UNSCRIPTABLE = /^(chrome|edge|about|chrome-extension|view-source|devtools):/
+const UNSCRIPTABLE =
+  /^(chrome|edge|about|chrome-extension|view-source|devtools):/
 
 interface Target {
   tabId: number
@@ -34,8 +35,7 @@ export function useAnalysis() {
     async (mode: 'quick' | 'deep') => {
       setState({
         status: 'loading',
-        detail:
-          mode === 'deep' ? 'Reloading page and measuring…' : undefined,
+        detail: mode === 'deep' ? 'Reloading page and measuring…' : undefined,
       })
       try {
         const target = await resolveTarget()

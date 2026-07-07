@@ -2,13 +2,7 @@
 // Everything in core/ is pure and unit-testable — no chrome.* or DOM access.
 
 export type ResourceCategory =
-  | 'html'
-  | 'css'
-  | 'js'
-  | 'image'
-  | 'font'
-  | 'video'
-  | 'other'
+  'html' | 'css' | 'js' | 'image' | 'font' | 'video' | 'other'
 
 export const RESOURCE_CATEGORIES: ResourceCategory[] = [
   'html',

@@ -13,13 +13,17 @@ describe('scriptUsedBytes', () => {
 
   it('counts a fully-executed function as fully used', () => {
     expect(
-      scriptUsedBytes([{ ranges: [{ startOffset: 0, endOffset: 100, count: 1 }] }]),
+      scriptUsedBytes([
+        { ranges: [{ startOffset: 0, endOffset: 100, count: 1 }] },
+      ]),
     ).toEqual({ used: 100, total: 100 })
   })
 
   it('counts a never-executed function as unused', () => {
     expect(
-      scriptUsedBytes([{ ranges: [{ startOffset: 0, endOffset: 100, count: 0 }] }]),
+      scriptUsedBytes([
+        { ranges: [{ startOffset: 0, endOffset: 100, count: 0 }] },
+      ]),
     ).toEqual({ used: 0, total: 100 })
   })
 
@@ -68,17 +72,23 @@ describe('summarizeJsCoverage', () => {
       {
         scriptId: '1',
         url: 'https://x.com/app.js',
-        functions: [{ ranges: [{ startOffset: 0, endOffset: 1000, count: 1 }] }],
+        functions: [
+          { ranges: [{ startOffset: 0, endOffset: 1000, count: 1 }] },
+        ],
       },
       {
         scriptId: '2',
         url: 'https://x.com/vendor.js',
-        functions: [{ ranges: [{ startOffset: 0, endOffset: 1000, count: 0 }] }],
+        functions: [
+          { ranges: [{ startOffset: 0, endOffset: 1000, count: 0 }] },
+        ],
       },
       {
         scriptId: '3',
         url: '', // inline / eval — ignored
-        functions: [{ ranges: [{ startOffset: 0, endOffset: 9999, count: 0 }] }],
+        functions: [
+          { ranges: [{ startOffset: 0, endOffset: 9999, count: 0 }] },
+        ],
       },
     ])
     expect(summary.totalJsBytes).toBe(2000)
@@ -131,7 +141,9 @@ describe('combineCoverage', () => {
         {
           scriptId: '1',
           url: 'https://x.com/app.js',
-          functions: [{ ranges: [{ startOffset: 0, endOffset: 100, count: 0 }] }],
+          functions: [
+            { ranges: [{ startOffset: 0, endOffset: 100, count: 0 }] },
+          ],
         },
       ],
       [{ styleSheetId: 'a', startOffset: 0, endOffset: 50, used: true }],

@@ -49,7 +49,8 @@ export function scriptUsedBytes(functions: CoverageFunction[]): {
       if (r.startOffset <= a && r.endOffset >= b) {
         if (
           !innermost ||
-          r.endOffset - r.startOffset < innermost.endOffset - innermost.startOffset
+          r.endOffset - r.startOffset <
+            innermost.endOffset - innermost.startOffset
         ) {
           innermost = r
         }

@@ -5,9 +5,15 @@ import {
   type RuleInput,
 } from '@/core/recommendations'
 import { RESOURCE_CATEGORIES } from '@/core/types'
-import type { CategoryWeight, ResourceCategory, WeightBreakdown } from '@/core/types'
+import type {
+  CategoryWeight,
+  ResourceCategory,
+  WeightBreakdown,
+} from '@/core/types'
 
-function emptyWeight(overrides: Partial<Record<ResourceCategory, CategoryWeight>> = {}): WeightBreakdown {
+function emptyWeight(
+  overrides: Partial<Record<ResourceCategory, CategoryWeight>> = {},
+): WeightBreakdown {
   const byCategory = RESOURCE_CATEGORIES.reduce(
     (acc, c) => {
       acc[c] = overrides[c] ?? { bytes: 0, count: 0 }
@@ -39,7 +45,13 @@ describe('generateRecommendations', () => {
     const recs = generateRecommendations({
       ...CLEAN,
       resources: [
-        { url: 'https://x.com/hero.jpg', category: 'image', bytes: 900 * 1024, estimated: false, thirdParty: false },
+        {
+          url: 'https://x.com/hero.jpg',
+          category: 'image',
+          bytes: 900 * 1024,
+          estimated: false,
+          thirdParty: false,
+        },
       ],
     })
     expect(recs.map((r) => r.id)).toContain('oversized-images')
@@ -50,7 +62,13 @@ describe('generateRecommendations', () => {
     const recs = generateRecommendations({
       ...CLEAN,
       resources: [
-        { url: 'https://x.com/loop.gif', category: 'image', bytes: 800 * 1024, estimated: false, thirdParty: false },
+        {
+          url: 'https://x.com/loop.gif',
+          category: 'image',
+          bytes: 800 * 1024,
+          estimated: false,
+          thirdParty: false,
+        },
       ],
     })
     expect(recs.map((r) => r.id)).toContain('animated-gif')
@@ -77,14 +95,24 @@ describe('generateRecommendations', () => {
     expect(
       generateRecommendations({
         ...CLEAN,
-        coverage: { unusedJsBytes: 500 * 1024, totalJsBytes: 5 * 1024 * 1024, unusedRatio: 0.1, ...noCss },
+        coverage: {
+          unusedJsBytes: 500 * 1024,
+          totalJsBytes: 5 * 1024 * 1024,
+          unusedRatio: 0.1,
+          ...noCss,
+        },
       }).map((r) => r.id),
     ).not.toContain('unused-js')
 
     // High ratio + enough bytes → high impact.
     const recs = generateRecommendations({
       ...CLEAN,
-      coverage: { unusedJsBytes: 700 * 1024, totalJsBytes: 1024 * 1024, unusedRatio: 0.68, ...noCss },
+      coverage: {
+        unusedJsBytes: 700 * 1024,
+        totalJsBytes: 1024 * 1024,
+        unusedRatio: 0.68,
+        ...noCss,
+      },
     })
     expect(recs.find((r) => r.id === 'unused-js')?.impact).toBe('high')
   })
@@ -92,7 +120,12 @@ describe('generateRecommendations', () => {
   it('flags unused CSS when it crosses thresholds', () => {
     const recs = generateRecommendations({
       ...CLEAN,
-      coverage: { ...noJs, unusedCssBytes: 80 * 1024, totalCssBytes: 120 * 1024, cssUnusedRatio: 0.67 },
+      coverage: {
+        ...noJs,
+        unusedCssBytes: 80 * 1024,
+        totalCssBytes: 120 * 1024,
+        cssUnusedRatio: 0.67,
+      },
     })
     expect(recs.find((r) => r.id === 'unused-css')?.impact).toBe('medium')
   })
@@ -127,7 +160,13 @@ describe('bestPracticesScore', () => {
     expect(
       bestPracticesScore([
         { id: 'a', title: '', detail: '', impact: 'high', category: 'general' },
-        { id: 'b', title: '', detail: '', impact: 'medium', category: 'general' },
+        {
+          id: 'b',
+          title: '',
+          detail: '',
+          impact: 'medium',
+          category: 'general',
+        },
         { id: 'c', title: '', detail: '', impact: 'low', category: 'general' },
       ]),
     ).toBe(100 - 20 - 10 - 5)

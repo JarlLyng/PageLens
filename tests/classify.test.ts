@@ -31,19 +31,34 @@ describe('resolveBytes', () => {
 
   it('prefers transferSize when present', () => {
     expect(
-      resolveBytes({ ...base, transferSize: 100, encodedBodySize: 90, decodedBodySize: 300 }),
+      resolveBytes({
+        ...base,
+        transferSize: 100,
+        encodedBodySize: 90,
+        decodedBodySize: 300,
+      }),
     ).toEqual({ bytes: 100, estimated: false })
   })
 
   it('falls back to encodedBodySize and marks estimated', () => {
     expect(
-      resolveBytes({ ...base, transferSize: 0, encodedBodySize: 90, decodedBodySize: 300 }),
+      resolveBytes({
+        ...base,
+        transferSize: 0,
+        encodedBodySize: 90,
+        decodedBodySize: 300,
+      }),
     ).toEqual({ bytes: 90, estimated: true })
   })
 
   it('returns zero (not estimated) when nothing is available', () => {
     expect(
-      resolveBytes({ ...base, transferSize: 0, encodedBodySize: 0, decodedBodySize: 0 }),
+      resolveBytes({
+        ...base,
+        transferSize: 0,
+        encodedBodySize: 0,
+        decodedBodySize: 0,
+      }),
     ).toEqual({ bytes: 0, estimated: false })
   })
 })
@@ -60,8 +75,12 @@ describe('isThirdParty', () => {
   })
 
   it('handles multi-part public suffixes correctly', () => {
-    expect(isThirdParty('https://foo.co.uk/a.js', 'https://bar.co.uk/p')).toBe(true)
-    expect(isThirdParty('https://a.foo.co.uk/x.js', 'https://foo.co.uk/p')).toBe(false)
+    expect(isThirdParty('https://foo.co.uk/a.js', 'https://bar.co.uk/p')).toBe(
+      true,
+    )
+    expect(
+      isThirdParty('https://a.foo.co.uk/x.js', 'https://foo.co.uk/p'),
+    ).toBe(false)
   })
 
   it('treats data URLs as first-party', () => {

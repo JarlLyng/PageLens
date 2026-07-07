@@ -15,8 +15,7 @@ export interface DeepScanRequest {
 export type PageLensRequest = AnalyzeRequest | DeepScanRequest
 
 export type PageLensResponse =
-  | { ok: true; data: AnalysisSnapshot }
-  | { ok: false; error: string }
+  { ok: true; data: AnalysisSnapshot } | { ok: false; error: string }
 
 /** Typed wrapper around chrome.runtime.sendMessage for popup callers. */
 export async function sendMessage(

@@ -83,7 +83,8 @@ const CRC_TABLE = (() => {
 
 function crc32(buf) {
   let c = 0xffffffff
-  for (let i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xff] ^ (c >>> 8)
+  for (let i = 0; i < buf.length; i++)
+    c = CRC_TABLE[(c ^ buf[i]) & 0xff] ^ (c >>> 8)
   return (c ^ 0xffffffff) >>> 0
 }
 
@@ -123,7 +124,12 @@ function encodePNG(rgba, size) {
   ])
 }
 
-const outDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'icons')
+const outDir = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  'public',
+  'icons',
+)
 mkdirSync(outDir, { recursive: true })
 
 for (const size of SIZES) {

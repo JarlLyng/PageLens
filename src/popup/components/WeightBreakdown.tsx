@@ -80,8 +80,8 @@ export function WeightBreakdownView({ weight }: { weight: WeightBreakdown }) {
 
       {weight.estimatedBytes > 0 && (
         <p className="text-xs text-ij-text-tertiary">
-          ~{formatBytes(weight.estimatedBytes)} estimated (cross-origin resources
-          without timing headers).
+          ~{formatBytes(weight.estimatedBytes)} estimated (cross-origin
+          resources without timing headers).
         </p>
       )}
     </section>

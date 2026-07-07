@@ -75,12 +75,12 @@ footprint, presenting a sustainability score and improvement recommendations.
 
 ## Permission justifications
 
-| Permission | Justification |
-|---|---|
-| `activeTab` | Read the active tab's URL and run the analysis only on the page the user explicitly invokes PageLens on. |
-| `scripting` | Inject a small collector script that reads the page's Performance resource-timing entries to measure transferred bytes. |
-| `storage` | Persist the user's "monthly visits" setting and cache green-hosting lookups locally. |
-| Host permission: `api.thegreenwebfoundation.org` | Look up whether the current site's hostname is hosted on green energy. |
+| Permission                                       | Justification                                                                                                           |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `activeTab`                                      | Read the active tab's URL and run the analysis only on the page the user explicitly invokes PageLens on.                |
+| `scripting`                                      | Inject a small collector script that reads the page's Performance resource-timing entries to measure transferred bytes. |
+| `storage`                                        | Persist the user's "monthly visits" setting and cache green-hosting lookups locally.                                    |
+| Host permission: `api.thegreenwebfoundation.org` | Look up whether the current site's hostname is hosted on green energy.                                                  |
 
 _(The store build intentionally omits `debugger`; do not request it in the listing.)_
 

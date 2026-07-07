@@ -57,7 +57,11 @@ async function buildSnapshot(
     : { status: 'unknown' as const, hostedBy: null }
 
   const monthlyVisits = await getMonthlyVisits()
-  const carbon = estimateCarbon(weight.totalBytes, hosting.status, monthlyVisits)
+  const carbon = estimateCarbon(
+    weight.totalBytes,
+    hosting.status,
+    monthlyVisits,
+  )
 
   const score = computeEcoScore({
     gramsPerView: carbon.gramsPerView,
@@ -94,7 +98,8 @@ async function deepScan(tabId: number): Promise<AnalysisSnapshot> {
   // Guarding the dynamic import with the compile-time flag makes the import()
   // unreachable in the store build, so Rollup drops the deep-scan chunk (and all
   // chrome.debugger code) entirely.
-  if (__STORE_BUILD__) throw new Error('Deep scan is not available in this build.')
+  if (__STORE_BUILD__)
+    throw new Error('Deep scan is not available in this build.')
   const { runDeepScan } = await import('./deep-scan')
   const { raw, scripts, cssRules, cssSheets } = await runDeepScan(tabId)
   return buildSnapshot(
@@ -116,7 +121,9 @@ chrome.runtime.onMessage.addListener(
     if (!work) return undefined
 
     work
-      .then((data) => sendResponse({ ok: true, data } satisfies PageLensResponse))
+      .then((data) =>
+        sendResponse({ ok: true, data } satisfies PageLensResponse),
+      )
       .catch((err: unknown) =>
         sendResponse({
           ok: false,

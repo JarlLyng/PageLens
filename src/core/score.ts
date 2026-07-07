@@ -5,12 +5,7 @@ import {
   WEIGHT_BEST_BYTES,
   WEIGHT_WORST_BYTES,
 } from './constants'
-import type {
-  EcoGrade,
-  EcoScore,
-  HostingStatus,
-  SubScores,
-} from './types'
+import type { EcoGrade, EcoScore, HostingStatus, SubScores } from './types'
 
 /**
  * Map a "lower is better" metric to 0–100 on a log scale.

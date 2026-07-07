@@ -3,23 +3,29 @@
 A Chrome MV3 extension that estimates the carbon footprint of the current page and
 turns it into an actionable A–F sustainability score.
 
+> **Status:** This began as the implementation plan and remains the reference for
+> the design rationale. Both tiers are now built and shipped — the quick scan
+> (Performance API) **and** the opt-in deep scan (`chrome.debugger` for exact
+> bytes + real unused JS/CSS). Remaining ideas below (history/compare, PDF
+> export) are tracked as GitHub issues.
+
 ---
 
 ## 1. The core architectural decision: how do we capture transferred bytes?
 
 Everything downstream (weight, CO₂, score, recommendations) depends on this. Three options:
 
-| Approach | Byte accuracy | Permission cost | Needs reload | Cross-origin |
-|---|---|---|---|---|
-| **PerformanceResourceTiming** (content script) | Good for same-origin & TAO-enabled hosts; `transferSize` is **0** for opaque cross-origin | `activeTab` + `scripting` only — no scary UI | No — reads already-loaded resources | blind spot (0 bytes) |
-| **`chrome.debugger` / CDP `Network` domain** | Best — real `encodedDataLength` per response, headers, compression | `debugger` → shows a **"PageLens is debugging this browser"** banner | Yes — must attach before load | full visibility |
-| **`chrome.webRequest`** | Poor — MV3 gives no reliable encoded sizes | `webRequest` + broad host perms | No | headers only |
+| Approach                                       | Byte accuracy                                                                             | Permission cost                                                      | Needs reload                        | Cross-origin         |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ----------------------------------- | -------------------- |
+| **PerformanceResourceTiming** (content script) | Good for same-origin & TAO-enabled hosts; `transferSize` is **0** for opaque cross-origin | `activeTab` + `scripting` only — no scary UI                         | No — reads already-loaded resources | blind spot (0 bytes) |
+| **`chrome.debugger` / CDP `Network` domain**   | Best — real `encodedDataLength` per response, headers, compression                        | `debugger` → shows a **"PageLens is debugging this browser"** banner | Yes — must attach before load       | full visibility      |
+| **`chrome.webRequest`**                        | Poor — MV3 gives no reliable encoded sizes                                                | `webRequest` + broad host perms                                      | No                                  | headers only         |
 
 **Decision: two-tier capture.**
 
 - **Tier 1 — Quick scan (default, MVP):** `PerformanceResourceTiming` via `chrome.scripting.executeScript`. Zero friction, no permission banner, instant. Handles the common case well.
   - Mitigate the cross-origin `transferSize === 0` gap: fall back to `encodedBodySize`, then `decodedBodySize`, and **flag the result as "estimated"** in the UI so we never present a false-precise number.
-- **Tier 2 — Deep scan (post-MVP, opt-in):** attach `chrome.debugger`, reload the tab, capture the full `Network` + `Coverage` domains. This is the *only* way to truly measure **unused JS/CSS** and exact transferred bytes. Gated behind an explicit "Run accurate scan (reloads page)" button.
+- **Tier 2 — Deep scan (post-MVP, opt-in):** attach `chrome.debugger`, reload the tab, capture the full `Network` + `Coverage` domains. This is the _only_ way to truly measure **unused JS/CSS** and exact transferred bytes. Gated behind an explicit "Run accurate scan (reloads page)" button.
 
 This staging lets the MVP ship without the debugger permission while keeping the accurate path on the roadmap. It's also honest — we label estimates as estimates.
 
@@ -42,6 +48,7 @@ This staging lets the MVP ship without the debugger permission while keeping the
 ```
 
 **Flow:**
+
 1. Toolbar click → popup opens, requests analysis for the active tab.
 2. Service worker injects the collector (`activeTab` grant), receives raw `PerformanceResourceTiming[]` + `PerformanceNavigationTiming`.
 3. Worker runs the pure `core/` pipeline: classify → aggregate → GWF lookup (cached) → CO₂ (CO2.js) → score → recommendations.
@@ -110,12 +117,12 @@ pagelens/
 
 **Eco Score (0–100)** = weighted sum of four sub-scores:
 
-| Sub-score | Weight | 100 pts at | 0 pts at | Curve |
-|---|---|---|---|---|
-| Carbon / view | 40% | ≤ 0.1 g | ≥ 3.0 g | log |
-| Page weight | 30% | ≤ 500 KB | ≥ 5 MB | log |
-| Green hosting | 15% | green | not green | green=100 / unknown=50 / not-green=0 |
-| Best practices | 15% | no issues | — | 100 minus per-issue deductions |
+| Sub-score      | Weight | 100 pts at | 0 pts at  | Curve                                |
+| -------------- | ------ | ---------- | --------- | ------------------------------------ |
+| Carbon / view  | 40%    | ≤ 0.1 g    | ≥ 3.0 g   | log                                  |
+| Page weight    | 30%    | ≤ 500 KB   | ≥ 5 MB    | log                                  |
+| Green hosting  | 15%    | green      | not green | green=100 / unknown=50 / not-green=0 |
+| Best practices | 15%    | no issues  | —         | 100 minus per-issue deductions       |
 
 **Grade:** A ≥90 · B 80–89 · C 70–79 · D 60–69 · E 50–59 · F <50.
 
@@ -127,15 +134,15 @@ Benchmarks anchored to HTTP Archive medians (~2.2 MB desktop) so a "typical" sit
 
 Rule engine — each rule: `{ id, detect(analysis) → boolean, impact: high|medium|low, savingEstimate?, title, detail, category }`.
 
-| Signal | Detectable in Tier 1? | Notes |
-|---|---|---|
-| Oversized images | ✅ | large single image transfers vs threshold |
-| Large JS bundles | ✅ | proxy for "unused JS" |
-| **Unused JS/CSS %** | ❌ Tier 2 only | needs CDP `Coverage` — don't fake it in MVP |
-| Excessive third-party scripts | ✅ | count/bytes of 3p js |
-| Large fonts | ✅ | font bytes + count |
-| Autoplay video | ⚠️ partial | collector inspects `<video autoplay>` in DOM |
-| Large CSS bundles | ✅ | css bytes threshold |
+| Signal                        | Detectable in Tier 1? | Notes                                        |
+| ----------------------------- | --------------------- | -------------------------------------------- |
+| Oversized images              | ✅                    | large single image transfers vs threshold    |
+| Large JS bundles              | ✅                    | proxy for "unused JS"                        |
+| **Unused JS/CSS %**           | ❌ Tier 2 only        | needs CDP `Coverage` — don't fake it in MVP  |
+| Excessive third-party scripts | ✅                    | count/bytes of 3p js                         |
+| Large fonts                   | ✅                    | font bytes + count                           |
+| Autoplay video                | ⚠️ partial            | collector inspects `<video autoplay>` in DOM |
+| Large CSS bundles             | ✅                    | css bytes threshold                          |
 
 Recommendations sort by `impact` then estimated CO₂ saving. Each renders as an expandable row (title + why + how).
 

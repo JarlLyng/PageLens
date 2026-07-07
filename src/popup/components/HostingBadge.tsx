@@ -7,7 +7,11 @@ const CONFIG = {
     label: 'Hosting unknown',
     className: 'text-ij-text-tertiary',
   },
-  'not-green': { icon: '❌', label: 'Not green hosted', className: 'text-ij-error' },
+  'not-green': {
+    icon: '❌',
+    label: 'Not green hosted',
+    className: 'text-ij-error',
+  },
 } as const
 
 export function HostingBadge({ hosting }: { hosting: HostingResult }) {

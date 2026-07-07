@@ -6,12 +6,34 @@ const raw: RawCollectorResult = {
   pageUrl: 'https://example.com/',
   collectedAt: 0,
   autoplayVideoCount: 1,
-  navigation: { transferSize: 10_000, encodedBodySize: 9_000, decodedBodySize: 40_000 },
+  navigation: {
+    transferSize: 10_000,
+    encodedBodySize: 9_000,
+    decodedBodySize: 40_000,
+  },
   resources: [
-    { url: 'https://example.com/app.js', initiatorType: 'script', transferSize: 50_000, encodedBodySize: 48_000, decodedBodySize: 120_000 },
-    { url: 'https://example.com/style.css', initiatorType: 'link', transferSize: 8_000, encodedBodySize: 7_000, decodedBodySize: 30_000 },
+    {
+      url: 'https://example.com/app.js',
+      initiatorType: 'script',
+      transferSize: 50_000,
+      encodedBodySize: 48_000,
+      decodedBodySize: 120_000,
+    },
+    {
+      url: 'https://example.com/style.css',
+      initiatorType: 'link',
+      transferSize: 8_000,
+      encodedBodySize: 7_000,
+      decodedBodySize: 30_000,
+    },
     // Cross-origin image with no transferSize → estimated from encodedBodySize.
-    { url: 'https://cdn.other.com/hero.jpg', initiatorType: 'img', transferSize: 0, encodedBodySize: 200_000, decodedBodySize: 200_000 },
+    {
+      url: 'https://cdn.other.com/hero.jpg',
+      initiatorType: 'img',
+      transferSize: 0,
+      encodedBodySize: 200_000,
+      decodedBodySize: 200_000,
+    },
   ],
 }
 

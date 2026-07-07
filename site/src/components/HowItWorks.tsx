@@ -37,9 +37,10 @@ export function HowItWorks() {
         </div>
 
         <p className="mx-auto mt-12 max-w-2xl rounded-ij-md border border-ij-border bg-ij-bg p-4 text-center text-sm text-ij-text-secondary">
-          PageLens gives an <strong className="text-ij-text">actionable
-          estimate</strong>, not an exact measurement. It’s transparent about
-          its methodology and clearly flags any figure it has to approximate.
+          PageLens gives an{' '}
+          <strong className="text-ij-text">actionable estimate</strong>, not an
+          exact measurement. It’s transparent about its methodology and clearly
+          flags any figure it has to approximate.
         </p>
       </div>
     </section>

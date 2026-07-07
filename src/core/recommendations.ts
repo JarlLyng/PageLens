@@ -42,7 +42,12 @@ const isGif = (url: string) => /\.gif(?:$|\?)/i.test(url)
 
 const oversizedImages: Rule = ({ resources }) => {
   const big = resources
-    .filter((r) => r.category === 'image' && !isGif(r.url) && r.bytes > OVERSIZED_IMAGE_BYTES)
+    .filter(
+      (r) =>
+        r.category === 'image' &&
+        !isGif(r.url) &&
+        r.bytes > OVERSIZED_IMAGE_BYTES,
+    )
     .sort((a, b) => b.bytes - a.bytes)
   if (big.length === 0) return null
   return {
@@ -53,7 +58,10 @@ const oversizedImages: Rule = ({ resources }) => {
     detail: `${big.length} image${big.length > 1 ? 's' : ''} exceed ${formatBytes(
       OVERSIZED_IMAGE_BYTES,
     )} (largest ${formatBytes(big[0].bytes)}). Compress, resize, and serve modern formats (WebP/AVIF).`,
-    savingBytes: big.reduce((sum, r) => sum + r.bytes - OVERSIZED_IMAGE_BYTES, 0),
+    savingBytes: big.reduce(
+      (sum, r) => sum + r.bytes - OVERSIZED_IMAGE_BYTES,
+      0,
+    ),
   }
 }
 

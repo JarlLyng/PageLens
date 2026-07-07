@@ -8,22 +8,19 @@ import type { RawCollectorResult } from '@/core/types'
  * use browser globals and must return a JSON-serializable value.
  */
 export function collectPageResources(): RawCollectorResult {
-  const resources = performance
-    .getEntriesByType('resource')
-    .map((e) => {
-      const r = e as PerformanceResourceTiming
-      return {
-        url: r.name,
-        initiatorType: r.initiatorType,
-        transferSize: r.transferSize ?? 0,
-        encodedBodySize: r.encodedBodySize ?? 0,
-        decodedBodySize: r.decodedBodySize ?? 0,
-      }
-    })
+  const resources = performance.getEntriesByType('resource').map((e) => {
+    const r = e as PerformanceResourceTiming
+    return {
+      url: r.name,
+      initiatorType: r.initiatorType,
+      transferSize: r.transferSize ?? 0,
+      encodedBodySize: r.encodedBodySize ?? 0,
+      decodedBodySize: r.decodedBodySize ?? 0,
+    }
+  })
 
   const navEntry = performance.getEntriesByType('navigation')[0] as
-    | PerformanceNavigationTiming
-    | undefined
+    PerformanceNavigationTiming | undefined
 
   const navigation = navEntry
     ? {
@@ -33,9 +30,7 @@ export function collectPageResources(): RawCollectorResult {
       }
     : null
 
-  const autoplayVideoCount = document.querySelectorAll(
-    'video[autoplay]',
-  ).length
+  const autoplayVideoCount = document.querySelectorAll('video[autoplay]').length
 
   return {
     pageUrl: location.href,

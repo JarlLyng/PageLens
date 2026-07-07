@@ -39,7 +39,9 @@ export function EcoScoreCard({ score }: { score: EcoScore }) {
       <ul className="flex flex-col gap-1.5">
         {SUBSCORE_LABELS.map(([key, label]) => (
           <li key={key} className="flex items-center gap-2 text-xs">
-            <span className="w-24 shrink-0 text-ij-text-secondary">{label}</span>
+            <span className="w-24 shrink-0 text-ij-text-secondary">
+              {label}
+            </span>
             <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-ij-muted">
               <span
                 className="block h-full rounded-full bg-ij-primary"

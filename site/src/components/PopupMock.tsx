@@ -16,7 +16,9 @@ export function PopupMock() {
         <span className="text-sm font-semibold">PageLens</span>
       </div>
 
-      <p className="mb-3 truncate text-xs text-ij-text-secondary">example.com</p>
+      <p className="mb-3 truncate text-xs text-ij-text-secondary">
+        example.com
+      </p>
 
       {/* Eco score */}
       <div className="mb-3 flex flex-col gap-3 rounded-ij-md border border-ij-border p-3">
@@ -26,7 +28,10 @@ export function PopupMock() {
           </div>
           <div>
             <div className="text-2xl font-semibold">
-              86<span className="text-base font-normal text-ij-text-tertiary">/100</span>
+              86
+              <span className="text-base font-normal text-ij-text-tertiary">
+                /100
+              </span>
             </div>
             <div className="text-xs text-ij-text-secondary">Eco Score</div>
           </div>
@@ -41,7 +46,9 @@ export function PopupMock() {
                   style={{ width: `${value}%` }}
                 />
               </span>
-              <span className="w-7 text-right text-ij-text-secondary">{value}</span>
+              <span className="w-7 text-right text-ij-text-secondary">
+                {value}
+              </span>
             </li>
           ))}
         </ul>

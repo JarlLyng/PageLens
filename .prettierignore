@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-store
+site/dist
+package-lock.json
+site/package-lock.json
+*.min.js
+store-assets
+public/icons
+site/public/og-image.png
+site/public/apple-touch-icon.png
+site/public/favicon-32.png

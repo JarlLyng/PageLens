@@ -1,83 +1,121 @@
 # PageLens
 
 [![CI](https://github.com/JarlLyng/PageLens/actions/workflows/ci.yml/badge.svg)](https://github.com/JarlLyng/PageLens/actions/workflows/ci.yml)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/mkajolhhjdlpmjlgdfnmbhfpbbeebgja?label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A Chrome extension (Manifest V3) that estimates the carbon footprint of the page
-you're viewing and turns it into an actionable A–F sustainability score.
+> See the carbon footprint of any web page — an actionable A–F Eco Score, right
+> in your browser.
 
-🧩 **Install:** [Chrome Web Store](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja) · 🌐 **Website:** https://pagelens.iamjarl.com · 📐 **Design:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+PageLens is a Chrome extension (Manifest V3) that estimates the digital carbon
+footprint of the page you're viewing and turns it into a simple sustainability
+score with concrete recommendations. It's built for developers, designers,
+agencies and sustainability teams who want to make the web lighter.
 
-The marketing site lives in [`site/`](site/) (Vite + React, deployed to GitHub
-Pages via [`.github/workflows/deploy-site.yml`](.github/workflows/deploy-site.yml)).
+🧩 **[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja)** · 🌐 **[pagelens.iamjarl.com](https://pagelens.iamjarl.com)**
 
-## Tech stack
+![PageLens popup showing an Eco Score, carbon estimate, green-hosting status and page-weight breakdown](store-assets/screenshot-1-1280x800.png)
 
-React · TypeScript · Vite · `@crxjs/vite-plugin` · Tailwind CSS · Chrome MV3
+## Features
 
-Styling is driven by the [iamjarl-design](https://github.com/JarlLyng/iamjarl-design)
-token system (`@iamjarl/design-tokens`). Its CSS custom properties are imported in
-`src/popup/index.css` and mapped onto Tailwind's theme as `ij-*` colors,
-`rounded-ij-*` radii, and the `font-sans`/`font-mono` families. Tokens auto-switch
-light/dark via `prefers-color-scheme`. The A–F Eco grade + impact colors are a
-separate local data-viz scale (`eco-*`), since the token system has no grade gradient.
+- **Eco Score** — one 0–100 score, graded A–F, blending carbon, page weight,
+  green hosting and best practices.
+- **Carbon estimate** — grams of CO₂ per view plus a configurable yearly
+  projection, via [CO2.js](https://www.thegreenwebfoundation.org/co2-js/)
+  (Sustainable Web Design model).
+- **Green hosting** — whether the site runs on green energy, via
+  [The Green Web Foundation](https://www.thegreenwebfoundation.org/).
+- **Page-weight breakdown** — transferred bytes by type (HTML, JS, CSS, images,
+  fonts, video) and third-party share.
+- **Recommendations** — a prioritized list of what to fix first.
+- **Deep scan (opt-in)** — a DevTools-Protocol scan for exact transferred bytes
+  and real unused JavaScript & CSS.
+
+PageLens gives an **actionable estimate, not an exact measurement**, and is
+transparent about how the score is calculated — see the in-popup Methodology and
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## How it works
+
+1. **Measure** — reads the page's transferred bytes via the browser's Resource
+   Timing API.
+2. **Estimate** — feeds those bytes to CO2.js, adjusted for green hosting.
+3. **Score & advise** — turns the result into an A–F Eco Score with a
+   plain-language list of improvements.
+
+The **quick scan** needs no special permissions. The optional **deep scan**
+attaches `chrome.debugger` and reloads the page to measure exact bytes and real
+unused code — so it shows Chrome's debugger banner and is a dev-build feature
+(the published Web Store build omits it for faster review).
 
 ## Getting started
 
+Requires **Node 20+** (see [`.nvmrc`](.nvmrc)).
+
 ```bash
 npm install
-npm run dev     # HMR dev build (writes to dist/, reloads the extension)
+npm run dev     # HMR build → dist/, hot-reloads the loaded extension
 npm run build   # production build → dist/
-npm test        # unit tests for the core/ analysis logic
-npm run icons   # regenerate toolbar icons → public/icons/
+npm test        # unit tests (vitest)
+npm run lint    # eslint
+npm run format  # prettier --write
 ```
 
-Toolbar icons are generated (no binary assets in the repo) by
-`scripts/generate-icons.mjs`, a dependency-free PNG encoder that draws the
-brand-purple lens mark at 16/32/48/128 px.
+**Load it in Chrome:** open `chrome://extensions`, enable **Developer mode**,
+click **Load unpacked**, and select the `dist/` folder.
 
-## Chrome Web Store
+## Project structure
 
-**Live:** https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja
+```
+src/
+  core/          Pure, framework-free analysis engine (unit-tested)
+                 classify · aggregate · carbon · score · recommendations · coverage
+  background/    MV3 service worker + chrome.debugger deep scan
+  content/       Injected Performance-timing collector
+  popup/         React UI (components, hooks)
+  lib/           Messaging, Green Web Foundation client, storage, settings
+tests/           Vitest suites for core/ (incl. score calibration)
+site/            Marketing site (Vite + React) → pagelens.iamjarl.com
+docs/            Architecture & Chrome Web Store guides
+scripts/         Dependency-free icon generator
+```
 
-The published build omits the `debugger` permission (and deep scan) for faster
-review:
+The analysis logic in `src/core/` is deliberately pure — no `chrome.*` or DOM
+access — which keeps it fully unit-testable. Chrome APIs live only at the edges.
+
+## Tech stack
+
+React · TypeScript · Vite · [`@crxjs/vite-plugin`](https://crxjs.dev/) ·
+Tailwind CSS · Chrome MV3 · CO2.js · Green Web Foundation API
+
+Styling uses the [iamjarl-design](https://github.com/JarlLyng/iamjarl-design)
+token system, mapped onto Tailwind and auto-switching light/dark.
+
+## Quality
+
+Every push and PR runs lint, format check, type-check, unit tests, and a
+production build via [CI](.github/workflows/ci.yml). The Eco Score thresholds
+live in `src/core/constants.ts` and are pinned by
+[`tests/calibration.test.ts`](tests/calibration.test.ts).
+
+## Publishing
+
+The published build omits the `debugger` permission:
 
 ```bash
 npm run package:store   # → pagelens-store.zip from a debugger-free dist-store/
 ```
 
 See [docs/chrome-store-listing.md](docs/chrome-store-listing.md) for the full
-submission guide and listing copy, and [PRIVACY.md](PRIVACY.md) /
+release process and [PRIVACY.md](PRIVACY.md) /
 [the hosted policy](https://pagelens.iamjarl.com/privacy.html).
 
-## Load the extension in Chrome
+## Contributing
 
-1. Run `npm run dev` (or `npm run build`).
-2. Open `chrome://extensions`.
-3. Enable **Developer mode** (top-right).
-4. Click **Load unpacked** and select the `dist/` folder.
-5. Pin PageLens and click its toolbar icon on any page.
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md). For security issues, see
+[SECURITY.md](SECURITY.md).
 
-During `npm run dev`, crxjs hot-reloads the extension on source changes.
+## License
 
-## Status
-
-**MVP complete.** Click the toolbar icon on any page to get:
-
-- Eco Score (0–100) with an A–F grade
-- Estimated CO₂ per view + configurable yearly projection (CO2.js / SWD model)
-- Green-hosting status (Green Web Foundation, cached per domain)
-- Page-weight breakdown by resource type + third-party share
-- Prioritized recommendations (High / Medium / Low)
-- Methodology explainer
-
-**Deep scan (opt-in):** the "Run deep scan" button attaches the DevTools Protocol
-(`chrome.debugger`) and reloads the page to measure **exact** transferred bytes
-(including cross-origin) and **real unused JavaScript and CSS** via V8 precise
-coverage + CSS rule-usage tracking. It shows Chrome's "PageLens is debugging this
-browser" banner while it runs — hence the explicit opt-in. The quick scan
-(Performance API) needs no such permission.
-
-The pure analysis logic lives in `src/core/` and is covered by unit tests
-(`npm test`). Remaining post-MVP ideas (history/compare across visits, PDF export)
-are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+[MIT](LICENSE) © IAMJARL
