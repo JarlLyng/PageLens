@@ -119,3 +119,14 @@ Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and the
 ## License
 
 [MIT](LICENSE) © IAMJARL
+
+---
+
+PageLens was co-created with AI, guided by a human.
+
+<a href="https://madebyhuman.iamjarl.com/badges">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" />
+    <img alt="Co-created with AI — madebyhuman.iamjarl.com" src="https://madebyhuman.iamjarl.com/badges/co-created-white.svg" width="220" />
+  </picture>
+</a>
