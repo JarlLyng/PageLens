@@ -12,10 +12,12 @@ export function Hero() {
           <span className="text-lg font-semibold">PageLens</span>
         </div>
         <a
-          href="#how"
-          className="text-sm font-medium text-ij-text-secondary transition-colors hover:text-ij-text"
+          href={STORE_URL}
+          target="_blank"
+          rel="noopener"
+          className="rounded-ij-md bg-ij-primary px-4 py-2 text-sm font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
         >
-          How it works
+          Add to Chrome
         </a>
       </nav>
 

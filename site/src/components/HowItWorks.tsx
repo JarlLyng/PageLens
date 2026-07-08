@@ -20,7 +20,7 @@ export function HowItWorks() {
   return (
     <section id="how" className="border-y border-ij-border bg-ij-muted">
       <div className="mx-auto max-w-content px-6 py-20">
-        <h2 className="mb-12 text-center text-3xl font-bold">How it works</h2>
+        <h2 className="mb-12 text-3xl font-bold">How it works</h2>
 
         <div className="grid gap-6 md:grid-cols-3">
           {STEPS.map((s) => (
@@ -36,7 +36,7 @@ export function HowItWorks() {
           ))}
         </div>
 
-        <p className="mx-auto mt-12 max-w-2xl rounded-ij-md border border-ij-border bg-ij-bg p-4 text-center text-sm text-ij-text-secondary">
+        <p className="mt-12 max-w-2xl rounded-ij-md border border-ij-border bg-ij-bg p-4 text-sm text-ij-text-secondary">
           PageLens gives an{' '}
           <strong className="text-ij-text">actionable estimate</strong>, not an
           exact measurement. It’s transparent about its methodology and clearly

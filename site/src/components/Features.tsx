@@ -34,10 +34,10 @@ const FEATURES = [
 export function Features() {
   return (
     <section className="mx-auto max-w-content px-6 py-20">
-      <h2 className="mb-3 text-center text-3xl font-bold">
+      <h2 className="mb-3 text-3xl font-bold">
         Everything you need to make pages lighter
       </h2>
-      <p className="mx-auto mb-12 max-w-xl text-center text-ij-text-secondary">
+      <p className="mb-12 max-w-xl text-ij-text-secondary">
         Built for developers, designers, agencies and sustainability teams.
       </p>
 

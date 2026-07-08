@@ -29,19 +29,19 @@ export const FAQ_ITEMS = [
 export function FAQ() {
   return (
     <section id="faq" className="mx-auto max-w-content px-6 py-20">
-      <h2 className="mb-10 text-center text-3xl font-bold">
-        Frequently asked questions
-      </h2>
-      <div className="mx-auto flex max-w-3xl flex-col gap-4">
-        {FAQ_ITEMS.map((item) => (
-          <div
-            key={item.q}
-            className="rounded-ij-lg border border-ij-border bg-ij-card p-6"
-          >
-            <h3 className="mb-2 text-lg font-semibold">{item.q}</h3>
-            <p className="text-ij-text-secondary">{item.a}</p>
-          </div>
-        ))}
+      <div className="mx-auto max-w-3xl">
+        <h2 className="mb-10 text-3xl font-bold">Frequently asked questions</h2>
+        <div className="flex flex-col gap-4">
+          {FAQ_ITEMS.map((item) => (
+            <div
+              key={item.q}
+              className="rounded-ij-lg border border-ij-border bg-ij-card p-6"
+            >
+              <h3 className="mb-2 text-lg font-semibold">{item.q}</h3>
+              <p className="text-ij-text-secondary">{item.a}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
