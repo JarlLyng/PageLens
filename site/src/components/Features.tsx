@@ -57,6 +57,16 @@ export function Features() {
           </div>
         ))}
       </div>
+
+      <p className="mt-10 text-ij-text-secondary">
+        Want the how-to?{' '}
+        <a
+          href="/guide/"
+          className="font-medium text-ij-primary hover:underline"
+        >
+          Read our guide to sustainable web design →
+        </a>
+      </p>
     </section>
   )
 }

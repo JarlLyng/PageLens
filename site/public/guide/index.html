@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Sustainable web design: best practices to cut your site's carbon footprint
+      · PageLens
+    </title>
+    <meta
+      name="description"
+      content="A practical guide to building lighter, greener websites — image, JavaScript, font, CSS, video, third-party and hosting best practices, in order of impact."
+    />
+    <link rel="canonical" href="https://pagelens.iamjarl.com/guide/" />
+    <meta name="robots" content="index, follow" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#A435D2" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://pagelens.iamjarl.com/guide/" />
+    <meta
+      property="og:title"
+      content="Sustainable web design: best practices"
+    />
+    <meta
+      property="og:description"
+      content="Practical, high-impact ways to build lighter, greener, faster websites — from images and JavaScript to green hosting."
+    />
+    <meta
+      property="og:image"
+      content="https://pagelens.iamjarl.com/og-image.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "Sustainable web design: best practices to cut your site's carbon footprint",
+        "description": "A practical guide to building lighter, greener websites — image, JavaScript, font, CSS, video, third-party and hosting best practices, in order of impact.",
+        "author": {
+          "@type": "Organization",
+          "name": "IAMJARL",
+          "url": "https://iamjarl.com"
+        },
+        "publisher": { "@type": "Organization", "name": "IAMJARL" },
+        "mainEntityOfPage": "https://pagelens.iamjarl.com/guide/"
+      }
+    </script>
+
+    <script
+      defer
+      src="https://umami-iamjarl.vercel.app/script.js"
+      data-website-id="83a51c18-5035-4694-8f76-15c3cd37055a"
+    ></script>
+
+    <style>
+      :root {
+        --primary: #a435d2;
+        --on-primary: #ffffff;
+        --text: #111111;
+        --text-2: rgba(0, 0, 0, 0.66);
+        --text-3: rgba(0, 0, 0, 0.5);
+        --bg: #ffffff;
+        --card: rgba(0, 0, 0, 0.035);
+        --border: rgba(0, 0, 0, 0.12);
+        --radius: 12px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --primary: #d0ff00;
+          --on-primary: #000000;
+          --text: #ffffff;
+          --text-2: rgba(255, 255, 255, 0.72);
+          --text-3: rgba(255, 255, 255, 0.55);
+          --bg: #000000;
+          --card: rgba(255, 255, 255, 0.05);
+          --border: rgba(255, 255, 255, 0.14);
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--primary);
+      }
+      header.site {
+        border-bottom: 1px solid var(--border);
+      }
+      .bar {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: var(--text);
+      }
+      .logo {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: var(--primary);
+        color: var(--on-primary);
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+      }
+      .cta {
+        background: var(--primary);
+        color: var(--on-primary);
+        text-decoration: none;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 56px 24px 80px;
+      }
+      .eyebrow {
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin: 0 0 12px;
+      }
+      h1 {
+        font-size: 2.4rem;
+        line-height: 1.15;
+        margin: 0 0 16px;
+      }
+      .lede {
+        font-size: 1.15rem;
+        color: var(--text-2);
+        margin: 0 0 8px;
+      }
+      .muted {
+        color: var(--text-3);
+        font-size: 0.9rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+        margin: 48px 0 8px;
+        scroll-margin-top: 80px;
+      }
+      h2 .num {
+        color: var(--text-3);
+        font-variant-numeric: tabular-nums;
+      }
+      p {
+        color: var(--text-2);
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        color: var(--text-2);
+        margin: 6px 0;
+      }
+      li strong,
+      p strong {
+        color: var(--text);
+      }
+      .toc {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        margin: 32px 0;
+        background: var(--card);
+      }
+      .toc h2 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+      }
+      .toc ol {
+        margin: 0;
+        padding-left: 20px;
+        columns: 1;
+      }
+      @media (min-width: 600px) {
+        .toc ol {
+          columns: 2;
+        }
+      }
+      .toc a {
+        text-decoration: none;
+      }
+      .callout {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--card);
+        padding: 20px 24px;
+        margin: 48px 0 0;
+      }
+      .callout h2 {
+        margin-top: 0;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 48px 0;
+      }
+      footer.site {
+        border-top: 1px solid var(--border);
+        color: var(--text-3);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site">
+      <div class="bar">
+        <a class="brand" href="/">
+          <span class="logo">P</span>
+          <strong>PageLens</strong>
+        </a>
+        <a
+          class="cta"
+          href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja"
+          target="_blank"
+          rel="noopener"
+          >Add to Chrome</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <p class="eyebrow">Guide</p>
+      <h1>Sustainable web design: best practices</h1>
+      <p class="lede">
+        Every page view has a carbon cost — the energy to transfer, process and
+        render its data. The upside: the same things that make a page
+        sustainable make it faster, cheaper and more accessible. Here are the
+        highest-impact ways to lighten your site, roughly in order of impact.
+      </p>
+      <p class="muted">Last updated: July 2026</p>
+
+      <nav class="toc" aria-label="Contents">
+        <h2>On this page</h2>
+        <ol>
+          <li><a href="#images">Right-size images</a></li>
+          <li><a href="#javascript">Ship less JavaScript</a></li>
+          <li><a href="#third-party">Tame third-party scripts</a></li>
+          <li><a href="#fonts">Optimize fonts</a></li>
+          <li><a href="#css">Trim your CSS</a></li>
+          <li><a href="#video">Handle video responsibly</a></li>
+          <li><a href="#hosting">Green hosting &amp; delivery</a></li>
+          <li><a href="#measure">Measure &amp; set a budget</a></li>
+        </ol>
+      </nav>
+
+      <p>
+        PageLens flags these issues on any page you visit; this guide is the
+        <em>how</em> behind the fixes. Measure as you go and treat page weight
+        like a budget you don't want to overspend.
+      </p>
+
+      <h2 id="images"><span class="num">01</span> Right-size images</h2>
+      <p>
+        Images are usually the single biggest source of page weight — and the
+        easiest win.
+      </p>
+      <ul>
+        <li>
+          <strong>Compress everything.</strong> Aim for the smallest file that
+          still looks good; quality 75–80 is often indistinguishable.
+        </li>
+        <li>
+          <strong>Use modern formats</strong> — AVIF or WebP typically beat
+          JPEG/PNG by 30–50%.
+        </li>
+        <li>
+          <strong>Serve responsive sizes</strong> with <code>srcset</code>/<code
+            >sizes</code
+          >
+          so phones don't download desktop-sized images.
+        </li>
+        <li>
+          <strong>Lazy-load</strong> below-the-fold images
+          (<code>loading="lazy"</code>) and always set
+          <code>width</code>/<code>height</code>.
+        </li>
+        <li>
+          <strong>Replace animated GIFs with MP4/WebM</strong> video — often
+          80–90% smaller.
+        </li>
+        <li>Don't ship a 4000&nbsp;px hero when 1600&nbsp;px will do.</li>
+      </ul>
+
+      <h2 id="javascript"><span class="num">02</span> Ship less JavaScript</h2>
+      <p>
+        JavaScript is the most expensive kind of byte: it's downloaded, parsed
+        <em>and</em> executed, draining battery and CPU.
+      </p>
+      <ul>
+        <li>
+          <strong>Audit the bundle</strong> and remove unused dependencies and
+          dead code (tree-shaking).
+        </li>
+        <li>
+          <strong>Code-split</strong> so each page loads only what it needs;
+          lazy-load heavy features.
+        </li>
+        <li>
+          <strong>Prefer the platform.</strong> Native HTML/CSS often replaces a
+          whole library (dialogs, accordions, form validation).
+        </li>
+        <li>
+          <strong>Defer non-critical scripts</strong>
+          (<code>defer</code>/<code>async</code>) so they don't block rendering.
+        </li>
+      </ul>
+
+      <h2 id="third-party">
+        <span class="num">03</span> Tame third-party scripts
+      </h2>
+      <p>
+        Analytics, ads, chat widgets and embeds each add bytes, requests and
+        energy — usually on every page.
+      </p>
+      <ul>
+        <li>
+          <strong>Audit what's actually used</strong> and remove the rest.
+        </li>
+        <li>
+          <strong>Load non-essential third parties lazily</strong> or only on
+          interaction (e.g. a chat widget on click).
+        </li>
+        <li>
+          <strong>Choose lightweight, privacy-friendly analytics</strong> over
+          heavy tag suites.
+        </li>
+      </ul>
+
+      <h2 id="fonts"><span class="num">04</span> Optimize fonts</h2>
+      <ul>
+        <li>
+          <strong>Self-host and serve WOFF2</strong> — the smallest, best-
+          supported format.
+        </li>
+        <li>
+          <strong>Limit families and weights;</strong> each one is a separate
+          download.
+        </li>
+        <li>
+          <strong>Subset</strong> to the characters and languages you use.
+        </li>
+        <li>
+          Use <code>font-display: swap</code>, or a system-font stack for body
+          text to ship zero font bytes.
+        </li>
+      </ul>
+
+      <h2 id="css"><span class="num">05</span> Trim your CSS</h2>
+      <ul>
+        <li>
+          <strong>Purge unused rules</strong> — UI frameworks often ship far
+          more than you use.
+        </li>
+        <li>
+          <strong>Inline critical CSS</strong> for first paint and load the rest
+          asynchronously.
+        </li>
+        <li>
+          Prefer small, composable styles over large kits you barely touch.
+        </li>
+      </ul>
+
+      <h2 id="video"><span class="num">06</span> Handle video responsibly</h2>
+      <ul>
+        <li>
+          <strong>Never autoplay.</strong> It forces a large download before the
+          user asks for it.
+        </li>
+        <li>
+          <strong>Use a poster image</strong> and load the video on click.
+        </li>
+        <li>
+          <strong>Compress</strong> and serve efficient formats (MP4/WebM); use
+          a streaming host for long content.
+        </li>
+      </ul>
+
+      <h2 id="hosting">
+        <span class="num">07</span> Green hosting &amp; efficient delivery
+      </h2>
+      <ul>
+        <li>
+          <strong>Host on green energy</strong> where you can — check with
+          <a
+            href="https://www.thegreenwebfoundation.org/"
+            target="_blank"
+            rel="noopener"
+            >The Green Web Foundation</a
+          >. It's the one factor you can't optimize away in code.
+        </li>
+        <li>
+          <strong>Use a CDN</strong> to serve assets from close to the user.
+        </li>
+        <li>
+          <strong>Enable compression</strong> (Brotli or gzip) and
+          <strong>long cache lifetimes</strong> so returning visitors
+          re-download less.
+        </li>
+        <li>Serve over HTTP/2 or HTTP/3.</li>
+      </ul>
+
+      <h2 id="measure">
+        <span class="num">08</span> Measure &amp; set a budget
+      </h2>
+      <ul>
+        <li>
+          <strong>You can't improve what you don't measure.</strong> Check pages
+          with PageLens, Lighthouse or WebPageTest.
+        </li>
+        <li>
+          <strong>Set a page-weight budget</strong> (e.g. under 1&nbsp;MB) and
+          treat regressions as bugs.
+        </li>
+        <li>
+          <strong>Re-check after changes</strong> — sustainability is a habit,
+          not a one-off audit.
+        </li>
+      </ul>
+
+      <div class="callout">
+        <h2>See where your pages stand</h2>
+        <p>
+          PageLens gives any page an A–F Eco Score and a prioritized list of
+          what to fix first — free, right in your browser.
+        </p>
+        <p>
+          <a
+            class="cta"
+            href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja"
+            target="_blank"
+            rel="noopener"
+            >Add PageLens to Chrome — free</a
+          >
+        </p>
+      </div>
+
+      <hr />
+      <p class="muted"><a href="/">← Back to PageLens</a></p>
+    </main>
+
+    <footer class="site">
+      <div class="bar">
+        <span>© 2026 IAMJARL</span>
+        <a href="/privacy.html">Privacy</a>
+      </div>
+    </footer>
+  </body>
+</html>
