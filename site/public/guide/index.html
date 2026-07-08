@@ -271,6 +271,8 @@
           <li><a href="#css">Trim your CSS</a></li>
           <li><a href="#video">Handle video responsibly</a></li>
           <li><a href="#hosting">Green hosting &amp; delivery</a></li>
+          <li><a href="#design">Design for sustainability</a></li>
+          <li><a href="#measured">How web carbon is measured</a></li>
           <li><a href="#measure">Measure &amp; set a budget</a></li>
         </ol>
       </nav>
@@ -410,16 +412,38 @@
       <h2 id="hosting">
         <span class="num">07</span> Green hosting &amp; efficient delivery
       </h2>
+      <p>
+        This is the one lever you can't optimize away in code: the electricity
+        your servers and networks actually run on. Green hosting changes the
+        carbon <em>per byte</em>, not the number of bytes.
+      </p>
       <ul>
         <li>
-          <strong>Host on green energy</strong> where you can — check with
+          <strong>Know what "green" means.</strong> A green host powers its
+          infrastructure with renewable energy — directly, or matched with
+          certificates — rather than fossil fuels.
+        </li>
+        <li>
+          <strong>Check your host</strong> with
           <a
             href="https://www.thegreenwebfoundation.org/"
             target="_blank"
             rel="noopener"
             >The Green Web Foundation</a
-          >. It's the one factor you can't optimize away in code.
+          >' greencheck (the same data PageLens uses). Their directory shows
+          which providers are verified.
         </li>
+        <li>
+          <strong>Prefer providers on real renewables</strong> over ones that
+          lean on offsets or certificates alone — the impact isn't equivalent.
+        </li>
+        <li>
+          <strong>Switching host</strong> is often the single biggest one-time
+          carbon reduction you can make — with no change to your code.
+        </li>
+      </ul>
+      <p>Then make delivery efficient:</p>
+      <ul>
         <li>
           <strong>Use a CDN</strong> to serve assets from close to the user.
         </li>
@@ -431,8 +455,77 @@
         <li>Serve over HTTP/2 or HTTP/3.</li>
       </ul>
 
+      <h2 id="design"><span class="num">08</span> Design for sustainability</h2>
+      <p>
+        The greenest byte is the one you never send. Before optimizing assets,
+        question whether they need to exist — this is where designers and
+        product owners have the most leverage.
+      </p>
+      <ul>
+        <li>
+          <strong>Design with restraint.</strong> Every carousel, animation,
+          embed and "nice-to-have" feature has an ongoing energy cost. Cut what
+          doesn't earn its place.
+        </li>
+        <li>
+          <strong>Avoid autoplay and infinite scroll</strong> — they pull down
+          data users never asked for.
+        </li>
+        <li>
+          <strong>Make the efficient path the default.</strong> Load heavy
+          media, maps and embeds on demand, not on page load.
+        </li>
+        <li>
+          <strong>Practise data discipline.</strong> Trim bloated analytics,
+          unused tracking and oversized content.
+        </li>
+        <li>
+          <strong>Help people find things fast.</strong> Clear content and
+          navigation means fewer searches and fewer page loads.
+        </li>
+      </ul>
+      <p>
+        Sustainable choices are almost always better UX too — faster, calmer and
+        more accessible.
+      </p>
+
+      <h2 id="measured">
+        <span class="num">09</span> How website carbon is measured
+      </h2>
+      <p>
+        Estimates aren't exact, but they're grounded in shared, open models —
+        worth understanding so you can read any tool's number critically.
+      </p>
+      <ul>
+        <li>
+          <strong>The Sustainable Web Design (SWD) model</strong> is the current
+          industry standard. It estimates emissions from transferred data, split
+          across data centres, networks and user devices, and factors in grid
+          carbon intensity and green hosting. PageLens uses
+          <a
+            href="https://www.thegreenwebfoundation.org/co2-js/"
+            target="_blank"
+            rel="noopener"
+            >CO2.js</a
+          >, an open-source implementation of it.
+        </li>
+        <li>
+          <strong>Green hosting</strong> lowers the assumed grid intensity for
+          the data-centre share — which is why it improves your estimate.
+        </li>
+        <li>
+          <strong>The W3C Web Sustainability Guidelines (WSG)</strong> go beyond
+          carbon to cover UX, hosting, business and social factors — a broader
+          framework if you want to go deeper.
+        </li>
+        <li>
+          <strong>Treat any single figure as an estimate</strong> for comparison
+          and trend-tracking, not an exact measurement.
+        </li>
+      </ul>
+
       <h2 id="measure">
-        <span class="num">08</span> Measure &amp; set a budget
+        <span class="num">10</span> Measure &amp; set a budget
       </h2>
       <ul>
         <li>
