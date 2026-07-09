@@ -1,1 +1,8 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions / support
+    url: mailto:support@iamjarl.com
+    about: General questions or anything that isn't a bug, feature, or marketing idea.
+  - name: 🔒 Security vulnerability
+    url: https://github.com/JarlLyng/PageLens/security/policy
+    about: Please report security issues privately, not as a public issue.
