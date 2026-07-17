@@ -36,9 +36,13 @@ interface ResponseMeta {
 function sendCommand<T = unknown>(
   target: chrome.debugger.Debuggee,
   method: string,
-  params?: object,
+  params?: Record<string, unknown>,
 ): Promise<T> {
-  return chrome.debugger.sendCommand(target, method, params) as Promise<T>
+  return chrome.debugger.sendCommand(
+    target,
+    method,
+    params,
+  ) as unknown as Promise<T>
 }
 
 function delay(ms: number): Promise<void> {
