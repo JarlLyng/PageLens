@@ -16,7 +16,7 @@ the extension, no tracking.
 - **Website:** [pagelens.iamjarl.com](https://pagelens.iamjarl.com)
 - **License:** [MIT](LICENSE) — open source.
 - **Price:** Free (no in-app purchases, no subscription, no ads)
-- **Status:** Launched — [Chrome Web Store](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja) (item `mkajolhhjdlpmjlgdfnmbhfpbbeebgja`), v1.0.0
+- **Status:** Launched — [Chrome Web Store](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja) (item `mkajolhhjdlpmjlgdfnmbhfpbbeebgja`). Current version `1.1.0` (see [CHANGELOG](CHANGELOG.md)).
 - **The outlier:** unlike most IAMJARL apps (native Apple, pay-once), PageLens
   is a free, open-source web extension — chosen deliberately for its use case.
 
