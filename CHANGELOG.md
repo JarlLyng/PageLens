@@ -4,6 +4,20 @@ All notable changes to PageLens are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-07-18
+
+### Changed
+
+- Updated to CO2.js 0.19 (newer Sustainable Web Design model). Carbon estimates
+  are now lower and more accurate — a median page is ~0.34 g (was ~0.88 g).
+- Recalibrated the carbon thresholds so the **A–F grade distribution is
+  unchanged**; only the displayed CO₂ figure moves.
+
+### Internal
+
+- Dependency & tooling housekeeping (`@types/chrome`, `eslint-plugin-react-hooks`,
+  GitHub Actions, Pages deploy actions).
+
 ## [1.0.0] - 2026-07-06
 
 First public release on the Chrome Web Store.

@@ -1,6 +1,6 @@
 {
   "name": "pagelens",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Chrome extension that estimates the carbon footprint of the current page.",
   "private": true,
   "type": "module",
