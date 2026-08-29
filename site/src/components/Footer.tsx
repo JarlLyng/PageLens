@@ -1,87 +1,51 @@
 import { STORE_URL } from '../config'
 
-const PAGELENS_LINKS = [
-  { label: 'Add to Chrome', href: STORE_URL },
-  { label: 'Guide', href: '/guide/' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Privacy', href: '/privacy.html' },
-]
-
-const IAMJARL_PROJECTS = [
-  { label: 'IAMJARL', href: 'https://iamjarl.com/' },
-  { label: 'Made by Human', href: 'https://madebyhuman.iamjarl.com/' },
-  { label: 'BotLens', href: 'https://botlens.iamjarl.com/' },
-]
-
-function LinkColumn({
-  title,
-  links,
-}: {
-  title: string
-  links: { label: string; href: string }[]
-}) {
-  return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-ij-text-tertiary">
-        {title}
-      </h2>
-      <ul className="flex flex-col gap-2 text-sm">
-        {links.map((link) => (
-          <li key={link.label}>
-            <a
-              href={link.href}
-              className="text-ij-text-secondary transition-colors hover:text-ij-text"
-            >
-              {link.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
+// The portfolio cross-links (BotLens, Made by Human, iamjarl.com …) are not
+// listed here: <ij-footer app="pagelens"> derives them from the design system's
+// app registry, so they stay correct as the portfolio changes. We only slot in
+// what is ours — PageLens's own links and the colophon.
+//
+// The unslotted children at the end are the pre-upgrade fallback: custom
+// elements render their own children until they upgrade, so that markup is what
+// a visitor sees if the component script never loads.
 export function Footer() {
+  const year = new Date().getFullYear()
+
+  // The component brings its own top border and vertical rhythm, but no
+  // horizontal padding or max-width — by design, so each site frames it with
+  // its own content width.
   return (
-    <footer className="border-t border-ij-border">
-      <div className="mx-auto grid max-w-content gap-10 px-6 py-12 sm:grid-cols-3">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <span className="grid h-7 w-7 place-items-center rounded-ij-sm bg-ij-primary text-xs font-bold text-ij-on-primary">
-              P
-            </span>
-            <span className="font-semibold">PageLens</span>
-          </div>
-          <p className="max-w-xs text-sm text-ij-text-secondary">
-            Website carbon footprint, by IAMJARL.
-          </p>
-          <p className="text-xs text-ij-text-tertiary">
-            Powered by{' '}
-            <a
-              href="https://www.thegreenwebfoundation.org/co2-js/"
-              className="underline transition-colors hover:text-ij-text-secondary"
-            >
-              CO2.js
-            </a>{' '}
-            &amp;{' '}
-            <a
-              href="https://www.thegreenwebfoundation.org/"
-              className="underline transition-colors hover:text-ij-text-secondary"
-            >
-              The Green Web Foundation
-            </a>
-          </p>
-        </div>
+    <div className="mx-auto max-w-content px-6 pb-10">
+      <ij-footer
+        app="pagelens"
+        tagline="See the carbon footprint of any web page."
+        links-label="PageLens"
+      >
+        <a slot="links" href={STORE_URL}>
+          Add to Chrome
+        </a>
+        <a slot="links" href="/guide/">
+          Guide
+        </a>
+        <a slot="links" href="#faq">
+          FAQ
+        </a>
+        <a slot="links" href="/privacy.html">
+          Privacy
+        </a>
 
-        <LinkColumn title="PageLens" links={PAGELENS_LINKS} />
-        <LinkColumn title="More from IAMJARL" links={IAMJARL_PROJECTS} />
-      </div>
-
-      <div className="border-t border-ij-border">
-        <p className="mx-auto max-w-content px-6 py-6 text-sm text-ij-text-tertiary">
-          © {new Date().getFullYear()} IAMJARL
+        <p slot="fineprint">
+          © {year} IAMJARL · Powered by{' '}
+          <a href="https://www.thegreenwebfoundation.org/co2-js/">CO2.js</a>{' '}
+          &amp;{' '}
+          <a href="https://www.thegreenwebfoundation.org/">
+            The Green Web Foundation
+          </a>
         </p>
-      </div>
-    </footer>
+
+        {/* Pre-upgrade fallback — not rendered once the element upgrades. */}
+        <p>© {year} IAMJARL</p>
+      </ij-footer>
+    </div>
   )
 }
