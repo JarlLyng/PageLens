@@ -10,6 +10,21 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # React 19 measured at +14.5 kB gzip (+26%) on the built site, for no
+      # gain: its custom-element improvements are properties and events, and
+      # <ij-footer> has an attributes-only API that React 18 already handles.
+      # Declining that trade on a page whose whole argument is page weight.
+      # See the measurement in PR #46 / #42. Delete these two entries to
+      # reconsider — src/ij-elements.d.ts is already React 19-compatible.
+      - dependency-name: react
+        update-types: ['version-update:semver-major']
+      - dependency-name: react-dom
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react-dom'
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:
