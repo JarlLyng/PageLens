@@ -28,7 +28,7 @@
     "@tgwf/co2": "^0.19.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tldts": "^6.1.65"
+    "tldts": "^7.4.11"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.28",
