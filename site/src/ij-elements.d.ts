@@ -6,9 +6,14 @@
 // @iamjarl/design-tokens so every React consumer gets it for free.
 //
 // Only attributes are declared, which mirrors the component's actual API
-// (observedAttributes: app, tagline, layout, links-label). That is also why
-// this is safe in React 18: React sets attributes, not properties, on unknown
-// elements — a property-based API would silently receive stringified values.
+// (observedAttributes: app, tagline, layout, links-label). React 19 can also
+// set properties and attach declarative events on custom elements, but this
+// component has no property or event API, so attributes remain the whole
+// surface.
+//
+// The augmentation targets `react`, not the global scope: @types/react 19
+// moved JSX out of the global namespace into React.JSX, so a `declare global`
+// block here would compile but never be consulted.
 import type { DetailedHTMLProps, HTMLAttributes } from 'react'
 
 type IjFooterProps = DetailedHTMLProps<
@@ -21,7 +26,7 @@ type IjFooterProps = DetailedHTMLProps<
   'links-label'?: string
 }
 
-declare global {
+declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       'ij-footer': IjFooterProps
