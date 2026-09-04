@@ -50,7 +50,7 @@ unused code — so it shows Chrome's debugger banner and is a dev-build feature
 
 ## Getting started
 
-Requires **Node 20+** (see [`.nvmrc`](.nvmrc)).
+Requires **Node 24** (see [`.nvmrc`](.nvmrc)).
 
 ```bash
 npm install

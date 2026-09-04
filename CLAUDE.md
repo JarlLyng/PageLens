@@ -53,7 +53,7 @@ here. This public repo keeps only code, normal OSS docs, and the marketing site.
 
 ## Requirements
 
-- Google Chrome (Manifest V3). Node 20+ to build (see `.nvmrc`).
+- Google Chrome (Manifest V3). Node 24 to build (see `.nvmrc`).
 
 ## Build & run
 

@@ -5,7 +5,7 @@ up and the conventions the project follows.
 
 ## Development setup
 
-Requires **Node 20+** (see `.nvmrc`).
+Requires **Node 24** (see `.nvmrc`).
 
 ```bash
 npm install
