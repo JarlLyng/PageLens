@@ -131,7 +131,39 @@
     ></script>
   </head>
   <body>
-    <div id="root"></div>
+    <!--
+      Pre-JS content. React replaces everything inside #root on mount
+      (createRoot().render() does not hydrate, it overwrites), so a visitor
+      never sees this — but GPTBot, ClaudeBot, CCBot and PerplexityBot do not
+      execute JavaScript, and without this they get the <title> and nothing
+      else.
+
+      The built CSS is a real <link> in <head>, so these are the Hero's own
+      classes and the pre-JS paint already looks right.
+
+      Deliberately only the headline, subhead and primary CTA: the parts that
+      change rarely. This duplicates src/components/Hero.tsx — keep the two in
+      sync, and do not grow this into a mirror of the whole page.
+    -->
+    <div id="root">
+      <div class="mx-auto max-w-content px-6 py-16">
+        <h1 class="text-4xl font-bold leading-tight md:text-5xl">
+          See the carbon footprint of any web page.
+        </h1>
+        <p class="mt-6 max-w-md text-lg text-ij-text-secondary">
+          PageLens estimates a page&rsquo;s digital emissions and turns them
+          into an actionable A&ndash;F Eco Score &mdash; with concrete ways to
+          make the web lighter. Free Chrome extension, no account, no tracking.
+        </p>
+        <p class="mt-6">
+          <a
+            class="rounded-ij-md bg-ij-primary px-5 py-3 font-semibold text-ij-on-primary"
+            href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja"
+            >Add to Chrome &mdash; free</a
+          >
+        </p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

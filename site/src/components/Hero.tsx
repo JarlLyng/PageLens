@@ -1,6 +1,10 @@
 import { PopupMock } from './PopupMock'
 import { STORE_URL } from '../config'
 
+// The headline, subhead and primary CTA below are duplicated as pre-JS
+// fallback markup in index.html, so that crawlers which do not run JavaScript
+// see real content instead of an empty #root. If you change the wording here,
+// change it there too.
 export function Hero() {
   return (
     <header className="border-b border-ij-border">
