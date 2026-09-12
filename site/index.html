@@ -163,6 +163,54 @@
           >
         </p>
       </div>
+
+      <!--
+        The footer, mirroring src/components/Footer.tsx. Unlike the hero above,
+        this is not only about the text: <ij-footer> can build the portfolio
+        cross-links itself, but only after JavaScript runs. The anchors below
+        are inlined from the design system's pre-rendered fragment by the
+        pagelens:inline-cross-links plugin in vite.config.ts, which is what
+        puts them in the served HTML.
+
+        The anchors must stay DIRECT children of <ij-footer> — a wrapper
+        element would not be projected into the slot.
+      -->
+      <div class="mx-auto max-w-content px-6 pb-10">
+        <ij-footer
+          app="pagelens"
+          tagline="See the carbon footprint of any web page."
+          links-label="PageLens"
+        >
+          <a
+            slot="links"
+            href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja"
+            >Add to Chrome</a
+          >
+          <a slot="links" href="/guide/">Guide</a>
+          <a slot="links" href="#faq">FAQ</a>
+          <a slot="links" href="/privacy.html">Privacy</a>
+
+          <!-- @ij-cross-links -->
+
+          <p slot="fineprint">
+            &copy;
+            <!-- @ij-year -->
+            IAMJARL &middot; Powered by
+            <a href="https://www.thegreenwebfoundation.org/co2-js/">CO2.js</a>
+            &amp;
+            <a href="https://www.thegreenwebfoundation.org/"
+              >The Green Web Foundation</a
+            >
+          </p>
+
+          <!-- Unslotted: shown only if the component script never loads. -->
+          <p>
+            &copy;
+            <!-- @ij-year -->
+            IAMJARL
+          </p>
+        </ij-footer>
+      </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

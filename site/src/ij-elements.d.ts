@@ -16,6 +16,15 @@
 // block here would compile but never be consulted.
 import type { DetailedHTMLProps, HTMLAttributes } from 'react'
 
+// Injected by Vite `define` from the design system's pre-rendered cross-link
+// fragment — see readCrossLinks() in vite.config.ts. Declared as a global
+// const rather than imported so the value is inlined at build time and there
+// is nothing to parse at runtime, matching the __STORE_BUILD__ flag the
+// extension build uses.
+declare global {
+  const __IJ_CROSS_LINKS__: ReadonlyArray<{ href: string; label: string }>
+}
+
 type IjFooterProps = DetailedHTMLProps<
   HTMLAttributes<HTMLElement>,
   HTMLElement

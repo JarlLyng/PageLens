@@ -15,3 +15,31 @@ body {
   font-family: var(--ij-font-ui);
   -webkit-font-smoothing: antialiased;
 }
+
+/*
+ * <ij-footer> before it upgrades — which is what a JS-less visitor and every
+ * crawler that matters for discovery actually get, since the footer's own
+ * styles live in a shadow root that only exists once its script has run.
+ *
+ * Without this the slotted children collapse into one run-on line of
+ * undifferentiated text. The component cannot fix this itself, so the host
+ * page has to. These rules stop applying the moment the element is defined.
+ */
+ij-footer:not(:defined) {
+  display: block;
+  border-top: 1px solid var(--ij-color-border-subtle);
+  padding-top: 1.5rem;
+  color: var(--ij-color-text-secondary);
+}
+
+ij-footer:not(:defined) > a {
+  display: inline-block;
+  margin: 0 1rem 0.5rem 0;
+  color: var(--ij-color-text-primary);
+}
+
+ij-footer:not(:defined) > [slot='cross-links'] {
+  /* The portfolio links are a separate group in the upgraded footer; keep
+     them readable as one here rather than merging with the site's own. */
+  color: var(--ij-color-text-secondary);
+}
