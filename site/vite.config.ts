@@ -51,20 +51,28 @@ function inlineCrossLinks(): Plugin {
   const placeholder = '<!-- @ij-cross-links -->'
   return {
     name: 'pagelens:inline-cross-links',
-    transformIndexHtml(html) {
+    transformIndexHtml(html, ctx) {
       if (!html.includes(placeholder)) {
         throw new Error(
           `index.html is missing the ${placeholder} placeholder — the ` +
             `cross-links would not reach the served HTML.`,
         )
       }
-      return (
-        html
-          .replace(placeholder, crossLinksHtml.trim())
-          // React prints the current year; the pre-JS copy would otherwise
-          // be frozen at whenever someone last edited the file by hand.
-          .replaceAll('<!-- @ij-year -->', String(new Date().getFullYear()))
-      )
+
+      const filled = html
+        .replace(placeholder, crossLinksHtml.trim())
+        // React prints the current year; the pre-JS copy would otherwise be
+        // frozen at whenever someone last edited the file by hand.
+        .replaceAll('<!-- @ij-year -->', String(new Date().getFullYear()))
+
+      // Comments are for whoever opens index.html, not for every visitor.
+      // The pre-JS markup carries a lot of them, and the inlined fragment
+      // brings its own "paste this by hand" header, which is doubly useless
+      // once a build is doing the pasting. Dev keeps them so view-source
+      // still explains itself. Must run after the substitutions above —
+      // the placeholders are comments too.
+      if (ctx.server) return filled
+      return filled.replace(/<!--[\s\S]*?-->/g, '').replace(/\n\s*\n+/g, '\n')
     },
   }
 }
