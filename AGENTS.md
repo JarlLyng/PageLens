@@ -1,4 +1,4 @@
-# CLAUDE.md — PageLens
+# AGENTS.md — PageLens
 
 Quick-start context for developers and AI assistants. Detailed design in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
