@@ -115,12 +115,18 @@ and one scrolled to the recommendations list.
 ## Submission steps
 
 1. `npm run package:store` → get `pagelens-store.zip`
-2. Developer Dashboard → **New item** → upload the zip
-3. Fill in the listing copy above
-4. Add screenshots + icon
-5. Set the privacy policy URL and complete the privacy/data-use disclosures
+2. **Smoke-test the exact build you are about to upload.** `chrome://extensions`
+   → Developer mode → **Load unpacked** → select `dist-store/`, then open the
+   popup on a content-rich page and confirm you get a score, a weight breakdown
+   and recommendations. CI builds the extension but never loads it, so a change
+   to the build chain — Vite, crxjs, a Manifest V3 field — can pass every check
+   and still ship something Chrome refuses to run.
+3. Developer Dashboard → **New item** → upload the zip
+4. Fill in the listing copy above
+5. Add screenshots + icon
+6. Set the privacy policy URL and complete the privacy/data-use disclosures
    (declare: no data sold; only hostname sent for green-hosting check)
-6. Submit for review
+7. Submit for review
 
 ## Automated publishing (GitHub Actions)
 
@@ -152,6 +158,12 @@ The workflow type-checks, tests, builds the debugger-free store zip, and
 uploads + submits it for review. The version tag must match `package.json`
 (the workflow fails otherwise). You can also run it manually from the Actions
 tab (**workflow_dispatch**).
+
+> **Smoke-test before you push the tag.** This path uploads _and submits_ with
+> no human in the loop, and nothing in it ever loads the extension — a build
+> that Chrome refuses to run passes the whole workflow. Do step 2 of the
+> submission steps above (`npm run build:store`, load `dist-store/` unpacked,
+> open the popup on a real page) before tagging.
 
 ## Notes
 
