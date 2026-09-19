@@ -1,4 +1,4 @@
-import { STORE_URL } from '../config'
+import { STORE_URL, storeClickAttrs } from '../config'
 
 export function CallToAction() {
   return (
@@ -13,6 +13,7 @@ export function CallToAction() {
           href={STORE_URL}
           target="_blank"
           rel="noopener"
+          {...storeClickAttrs('midpage')}
           className="inline-block rounded-ij-md bg-ij-on-primary px-6 py-3 font-semibold text-ij-primary transition-transform hover:scale-105"
         >
           Add to Chrome — free

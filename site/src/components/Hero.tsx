@@ -1,5 +1,5 @@
 import { PopupMock } from './PopupMock'
-import { STORE_URL } from '../config'
+import { STORE_URL, storeClickAttrs } from '../config'
 
 // The headline, subhead and primary CTA below are duplicated as pre-JS
 // fallback markup in index.html, so that crawlers which do not run JavaScript
@@ -19,6 +19,7 @@ export function Hero() {
           href={STORE_URL}
           target="_blank"
           rel="noopener"
+          {...storeClickAttrs('header')}
           className="rounded-ij-md bg-ij-primary px-4 py-2 text-sm font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
         >
           Add to Chrome
@@ -43,6 +44,7 @@ export function Hero() {
               href={STORE_URL}
               target="_blank"
               rel="noopener"
+              {...storeClickAttrs('hero')}
               className="rounded-ij-md bg-ij-primary px-5 py-3 font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
             >
               Add to Chrome — free

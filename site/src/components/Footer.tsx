@@ -1,4 +1,4 @@
-import { STORE_URL } from '../config'
+import { STORE_URL, storeClickAttrs } from '../config'
 
 // The portfolio cross-links are not written out here: they come from the
 // design system's pre-rendered fragment, inlined at build time by the
@@ -28,7 +28,7 @@ export function Footer() {
         tagline="See the carbon footprint of any web page."
         links-label="PageLens"
       >
-        <a slot="links" href={STORE_URL}>
+        <a slot="links" href={STORE_URL} {...storeClickAttrs('footer')}>
           Add to Chrome
         </a>
         <a slot="links" href="/guide/">
