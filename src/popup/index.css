@@ -24,6 +24,7 @@
 @theme inline {
   --color-ij-primary: var(--ij-color-primary);
   --color-ij-primary-hover: var(--ij-color-primary-hover);
+  --color-ij-primary-subtle: var(--ij-color-primary-subtle);
   --color-ij-on-primary: var(--ij-color-on-primary);
   --color-ij-text: var(--ij-color-text-primary);
   --color-ij-text-secondary: var(--ij-color-text-secondary);
