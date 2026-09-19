@@ -62,10 +62,24 @@ export function categorize(
   return INITIATOR_CATEGORY[initiatorType] ?? 'other'
 }
 
+// The public suffix list has an ICANN section (com, co.uk, com.au) and a
+// private one (github.io, vercel.app, netlify.app, pages.dev, blogspot.com,
+// s3.amazonaws.com …). tldts ignores the private section by default, which
+// collapses every site on a hosting platform into one domain: a tracker on a
+// stranger's github.io then counts as the page's own.
+//
+// Honouring it costs something too — an organisation split across
+// foo.github.io and foo-assets.github.io now sees them as separate parties.
+// That is what eTLD+1 actually means, and undercounting a stranger's tracker
+// as first-party is the worse error of the two: it only ever flatters the
+// score, and it does so on exactly the kind of page this extension gets run
+// on.
+const DOMAIN_OPTIONS = { allowPrivateDomains: true } as const
+
 /** Third-party = different registrable domain (eTLD+1) than the page. */
 export function isThirdParty(resourceUrl: string, pageUrl: string): boolean {
-  const pageDomain = getDomain(pageUrl)
-  const resourceDomain = getDomain(resourceUrl)
+  const pageDomain = getDomain(pageUrl, DOMAIN_OPTIONS)
+  const resourceDomain = getDomain(resourceUrl, DOMAIN_OPTIONS)
   // Data/blob URLs (no domain) are inlined into the page → first-party.
   if (!resourceDomain) return false
   if (!pageDomain) return false

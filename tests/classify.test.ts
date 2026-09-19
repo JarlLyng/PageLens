@@ -86,6 +86,62 @@ describe('isThirdParty', () => {
   it('treats data URLs as first-party', () => {
     expect(isThirdParty('data:image/png;base64,AAAA', page)).toBe(false)
   })
+
+  // Hosting platforms are on the private half of the public suffix list. If
+  // that half is ignored, every site on github.io collapses into one domain
+  // and a stranger's tracker counts as the page's own — which only ever
+  // flatters the score.
+  describe('platform-hosted pages', () => {
+    it('treats another account on the same platform as third-party', () => {
+      const ownPage = 'https://myproject.github.io/app/'
+      expect(
+        isThirdParty('https://otherperson.github.io/tracker.js', ownPage),
+      ).toBe(true)
+      expect(
+        isThirdParty(
+          'https://shop-b.vercel.app/a.js',
+          'https://shop-a.vercel.app/',
+        ),
+      ).toBe(true)
+      expect(
+        isThirdParty('https://b.netlify.app/a.js', 'https://a.netlify.app/'),
+      ).toBe(true)
+    })
+
+    it('still treats the page platform-host as its own first-party', () => {
+      const ownPage = 'https://myproject.github.io/app/'
+      expect(isThirdParty('https://myproject.github.io/app.js', ownPage)).toBe(
+        false,
+      )
+    })
+
+    it('treats a real CDN as third-party from a platform-hosted page', () => {
+      expect(
+        isThirdParty(
+          'https://cdn.jsdelivr.net/lib.js',
+          'https://myproject.github.io/app/',
+        ),
+      ).toBe(true)
+    })
+  })
+
+  // Regression guard: honouring private suffixes must not reclassify ordinary
+  // sites, which is where almost every scan actually happens.
+  describe('ordinary domains are unaffected', () => {
+    it('keeps subdomains of one company first-party', () => {
+      expect(isThirdParty('https://api.example.com/a', page)).toBe(false)
+      expect(isThirdParty('https://www.example.com/a', page)).toBe(false)
+    })
+
+    it('keeps multi-part ICANN suffixes intact', () => {
+      expect(
+        isThirdParty('https://sub.example.com.au/a', 'https://example.com.au/'),
+      ).toBe(false)
+      expect(
+        isThirdParty('https://www.google.co.uk/a', 'https://google.co.uk/'),
+      ).toBe(false)
+    })
+  })
 })
 
 describe('classifyResource', () => {

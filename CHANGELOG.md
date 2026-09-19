@@ -4,6 +4,22 @@ All notable changes to PageLens are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Third-party detection now recognises hosting platforms. Resources from a
+  different account on the same platform (`github.io`, `vercel.app`,
+  `netlify.app`, `pages.dev`, `blogspot.com`, `s3.amazonaws.com` …) were
+  counted as first-party, which under-reported the third-party share and
+  flattered the score. **Pages hosted on those platforms may score slightly
+  lower**, and more accurately; ordinary domains are unaffected.
+
+### Internal
+
+- Dependency housekeeping: Vite 7 for the extension build, design system
+  v1.9.0, tldts 7.4.12, `@types/chrome` 0.2.9, eslint 10.10.0.
+
 ## [1.1.0] - 2026-07-18
 
 ### Changed
