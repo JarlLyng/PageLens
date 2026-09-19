@@ -87,7 +87,7 @@ export function PopupMock() {
 
       {/* One recommendation */}
       <div className="mt-3 flex items-center gap-2 rounded-ij-md border border-ij-border p-2.5 text-sm">
-        <span className="rounded bg-eco-e/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-eco-e">
+        <span className="rounded bg-eco-e/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase leading-5 text-eco-e">
           High
         </span>
         <span className="flex-1 font-medium">Compress oversized images</span>

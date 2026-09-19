@@ -31,7 +31,10 @@ export function Hero() {
           <span className="w-fit rounded-full bg-ij-primary-subtle px-3 py-1 text-xs font-semibold text-ij-primary">
             Chrome extension
           </span>
-          <h1 className="text-4xl font-bold leading-tight md:text-5xl">
+          {/* md:leading-none holds the pre-Tailwind-4 rendering. In v3 the
+              font-size utility's own line-height beat leading-tight; v4 lets
+              leading-tight win, which added 36px to this heading. */}
+          <h1 className="text-4xl font-bold leading-tight md:text-5xl md:leading-none">
             See the carbon footprint of any web page.
           </h1>
           <p className="max-w-md text-lg text-ij-text-secondary">

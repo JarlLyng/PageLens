@@ -1,8 +1,70 @@
 @import '@iamjarl/design-tokens/css';
+@import 'tailwindcss' source(none);
+/* Explicit for the same reason as the extension's: automatic detection is
+   scoped to wherever the build runs, which is a thing that can change. These
+   are the globs the old config had. */
+@source '../index.html';
+@source './**/*.{ts,tsx}';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * Tailwind 4 configures the theme in CSS rather than tailwind.config.js.
+ *
+ * Every colour, radius and font below is a pointer into @iamjarl/design-tokens
+ * — the utilities resolve to `var(--ij-*)` at use time, so light/dark still
+ * comes from the design system switching those variables, not from Tailwind
+ * knowing anything about themes. The eco scale is the one exception: those are
+ * the A–F grade colours, which are PageLens's own and not in the token set.
+ *
+ * Keep this in step with the extension's src/popup/index.css. The two are
+ * separate npm projects with separate builds, and the popup and the site
+ * looking alike depends on these two blocks agreeing.
+ */
+@theme inline {
+  --color-ij-primary: var(--ij-color-primary);
+  --color-ij-primary-hover: var(--ij-color-primary-hover);
+  --color-ij-on-primary: var(--ij-color-on-primary);
+  --color-ij-text: var(--ij-color-text-primary);
+  --color-ij-text-secondary: var(--ij-color-text-secondary);
+  --color-ij-text-tertiary: var(--ij-color-text-tertiary);
+  --color-ij-bg: var(--ij-color-bg-app);
+  --color-ij-card: var(--ij-color-bg-card);
+  --color-ij-muted: var(--ij-color-bg-muted);
+  --color-ij-surface: var(--ij-color-surface-default);
+  --color-ij-border: var(--ij-color-border-subtle);
+  --color-ij-border-strong: var(--ij-color-border-default);
+  --color-ij-success: var(--ij-color-state-success);
+  --color-ij-warning: var(--ij-color-state-warning);
+  --color-ij-error: var(--ij-color-state-error);
+
+  --color-eco-a: #0cce6b;
+  --color-eco-b: #8ac926;
+  --color-eco-c: #ffca3a;
+  --color-eco-d: #ff924c;
+  --color-eco-e: #ff595e;
+  --color-eco-f: #d00000;
+
+  /* The resource-type bar in PopupMock uses five of Tailwind's stock colours.
+     Tailwind 4 re-derived its default palette in OKLCH, which shifts all five.
+     Pinned to the v3 values so the mock keeps rendering what it rendered
+     before — and, incidentally, so a data-viz scale the page depends on stops
+     being whatever the framework happens to ship. */
+  --color-amber-500: #f59e0b;
+  --color-emerald-500: #10b981;
+  --color-violet-500: #8b5cf6;
+  --color-sky-500: #0ea5e9;
+  --color-pink-500: #ec4899;
+
+  --radius-ij-sm: var(--ij-radius-sm);
+  --radius-ij-md: var(--ij-radius-md);
+  --radius-ij-lg: var(--ij-radius-lg);
+
+  --font-sans: var(--ij-font-ui), system-ui, sans-serif;
+  --font-mono: var(--ij-font-mono), ui-monospace, monospace;
+
+  /* Powers max-w-content. In v4 the container scale drives the width
+     utilities, where v3 had a separate maxWidth key. */
+  --container-content: 1080px;
+}
 
 html {
   scroll-behavior: smooth;

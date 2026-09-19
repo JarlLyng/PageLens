@@ -1,10 +1,70 @@
 /* IAMJARL design tokens — must precede Tailwind so the CSS variables exist.
    Tokens auto-switch light/dark via prefers-color-scheme. */
 @import '@iamjarl/design-tokens/css';
+@import 'tailwindcss' source(none);
+/* Tailwind 4 detects content automatically, starting from this build's root —
+   which for the extension is the repo root, and that contains site/. Without
+   this the marketing site's utilities (md:text-5xl, hover:scale-105 …) end up
+   in the popup bundle. Scope it to the same glob the old config had. */
+@source '../**/*.{ts,tsx,html}';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * Tailwind 4 configures the theme in CSS rather than tailwind.config.js.
+ *
+ * `inline` matters here: without it Tailwind would emit a second variable per
+ * entry (--color-ij-primary: var(--ij-color-primary)) that only points at the
+ * design token. Inlined, the utilities reference var(--ij-*) directly, so
+ * light/dark still comes from the design system switching those variables.
+ *
+ * Keep this in step with the site's site/src/index.css. The two are separate
+ * npm projects with separate builds, and the popup and the site looking alike
+ * depends on these two blocks agreeing. The site adds --container-content for
+ * its page width; nothing in the popup needs it.
+ */
+@theme inline {
+  --color-ij-primary: var(--ij-color-primary);
+  --color-ij-primary-hover: var(--ij-color-primary-hover);
+  --color-ij-on-primary: var(--ij-color-on-primary);
+  --color-ij-text: var(--ij-color-text-primary);
+  --color-ij-text-secondary: var(--ij-color-text-secondary);
+  --color-ij-text-tertiary: var(--ij-color-text-tertiary);
+  --color-ij-bg: var(--ij-color-bg-app);
+  --color-ij-card: var(--ij-color-bg-card);
+  --color-ij-muted: var(--ij-color-bg-muted);
+  --color-ij-surface: var(--ij-color-surface-default);
+  --color-ij-border: var(--ij-color-border-subtle);
+  --color-ij-border-strong: var(--ij-color-border-default);
+  --color-ij-success: var(--ij-color-state-success);
+  --color-ij-warning: var(--ij-color-state-warning);
+  --color-ij-error: var(--ij-color-state-error);
+
+  /* Eco grade + impact scale: a categorical data-viz palette. The token
+     system intentionally has no A–F gradient, so this stays a local scale. */
+  --color-eco-a: #0cce6b;
+  --color-eco-b: #8ac926;
+  --color-eco-c: #ffca3a;
+  --color-eco-d: #ff924c;
+  --color-eco-e: #ff595e;
+  --color-eco-f: #d00000;
+
+  --radius-ij-sm: var(--ij-radius-sm);
+  --radius-ij-md: var(--ij-radius-md);
+  --radius-ij-lg: var(--ij-radius-lg);
+
+  --font-sans: var(--ij-font-ui), system-ui, sans-serif;
+  --font-mono: var(--ij-font-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  /* Tailwind 4 dropped Preflight's `button { cursor: pointer }`. The scan-mode
+     toggle is a real <button> and looked clickable before the upgrade; this
+     keeps it that way. The <summary> elements set cursor-pointer themselves.
+     Restoring it here is what Tailwind's own upgrade guide recommends. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 html,
 body {
