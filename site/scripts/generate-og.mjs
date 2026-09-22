@@ -33,23 +33,55 @@ const chips = GRADES.map(([letter, color], i) => {
           fill="#0f0f14" text-anchor="middle">${letter}</text>`
 }).join('')
 
+// The Eco Score panel — the product's signature, and the third thing a social
+// card has to carry besides the name and the outcome line (hub DESIGN.md,
+// "Social cards"). Figures match PopupMock on the site so the card shows what
+// a visitor actually lands on, not an invented screen.
+const CARD_BG = '#1b1b20' // bg-card (5% white) resolved over the card background
+const CARD_BORDER = '#2c2c30' // border-subtle (12% white) resolved
+const DIM = '#9a9aa6'
+
+function scoreCard(x, y, w, h) {
+  return `
+  <g transform="translate(${x},${y})">
+    <rect width="${w}" height="${h}" rx="26" fill="${CARD_BG}" stroke="${CARD_BORDER}" stroke-width="2" />
+
+    <text x="36" y="58" font-family="${FONT}" font-size="24" fill="${DIM}">example.com</text>
+
+    <rect x="36" y="86" width="96" height="96" rx="22" fill="#0cce6b" />
+    <text x="84" y="154" font-family="${FONT}" font-size="60" font-weight="700"
+          fill="#0f0f14" text-anchor="middle">A</text>
+
+    <text x="156" y="142" font-family="${FONT}" font-size="58" font-weight="700" fill="#ffffff">86</text>
+    <text x="222" y="142" font-family="${FONT}" font-size="30" fill="${DIM}">/100</text>
+    <text x="156" y="176" font-family="${FONT}" font-size="24" fill="${DIM}">Eco Score</text>
+
+    <rect x="36" y="216" width="${w - 72}" height="2" fill="${CARD_BORDER}" />
+
+    <text x="36" y="286" font-family="${FONT}" font-size="44" font-weight="700" fill="#ffffff">0.24 g</text>
+    <text x="36" y="322" font-family="${FONT}" font-size="24" fill="${DIM}">CO\u2082 per view</text>
+
+    <text x="${w / 2 + 12}" y="286" font-family="${FONT}" font-size="44" font-weight="700" fill="#ffffff">28.8 kg</text>
+    <text x="${w / 2 + 12}" y="322" font-family="${FONT}" font-size="24" fill="${DIM}">CO\u2082 per year</text>
+  </g>`
+}
+
 const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#0f0f14" />
   <circle cx="1050" cy="120" r="280" fill="#A435D2" opacity="0.18" />
   <circle cx="1130" cy="560" r="220" fill="#D0FF00" opacity="0.10" />
 
-  <g transform="translate(96,140)">
-    <rect width="120" height="120" rx="28" fill="#A435D2" />
-    <circle cx="60" cy="60" r="40" fill="none" stroke="#ffffff" stroke-width="14" />
-    <circle cx="60" cy="60" r="15" fill="#0cce6b" />
-  </g>
-  <text x="250" y="228" font-family="${FONT}" font-size="92" font-weight="700" fill="#ffffff">PageLens</text>
+  ${logo(96, 108, 104)}
+  <text x="224" y="184" font-family="${FONT}" font-size="76" font-weight="700" fill="#ffffff">PageLens</text>
 
-  <text x="98" y="356" font-family="${FONT}" font-size="40" fill="#c7c7d1">See the carbon footprint of any web page.</text>
+  <text x="96" y="304" font-family="${FONT}" font-size="38" fill="#c7c7d1">See the carbon footprint</text>
+  <text x="96" y="352" font-family="${FONT}" font-size="38" fill="#c7c7d1">of any web page.</text>
 
-  ${chips}
+  ${chipRow(96, 408, 62, 44, 14, 26)}
 
-  <text x="98" y="566" font-family="${FONT}" font-size="30" fill="#D0FF00">pagelens.iamjarl.com</text>
+  <text x="96" y="552" font-family="${FONT}" font-size="28" fill="#D0FF00">pagelens.iamjarl.com</text>
+
+  ${scoreCard(652, 108, 452, 380)}
 </svg>`
 
 function renderToPng(svg, width) {
