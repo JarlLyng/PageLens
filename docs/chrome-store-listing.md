@@ -165,8 +165,19 @@ git push --tags
 
 The workflow type-checks, tests, builds the debugger-free store zip, and
 uploads + submits it for review. The version tag must match `package.json`
-(the workflow fails otherwise). You can also run it manually from the Actions
-tab (**workflow_dispatch**).
+(the workflow fails otherwise).
+
+**Checking the credentials without releasing:** run it manually from the
+Actions tab (**workflow_dispatch**). The `draft` input is ticked by default, so
+a manual run uploads a draft and submits nothing. Untick it only when you mean
+to publish from a manual run.
+
+Expect that draft test to be refused if `package.json` still holds the version
+that is already live — the store takes only a higher version. That refusal is
+good news: it comes _after_ Google has accepted the credentials. A credentials
+problem fails earlier and reads differently (`invalid_grant`, or "OAuth client
+was not found"). So the cleanest time to run it is right after bumping the
+version for the next release, before tagging.
 
 > **Smoke-test before you push the tag.** This path uploads _and submits_ with
 > no human in the loop, and nothing in it ever loads the extension — a build

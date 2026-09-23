@@ -15,6 +15,14 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      draft:
+        # Defaults to a draft so that a manual run — the natural way to check
+        # the credentials — cannot submit a release for review by accident.
+        # A tag push has no inputs, so it always publishes.
+        description: Upload as a draft only (proves the credentials, submits nothing)
+        type: boolean
+        default: true
 
 jobs:
   publish:
@@ -64,4 +72,9 @@ jobs:
           CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-        run: npx chrome-webstore-upload-cli@4 --source pagelens-store.zip
+        run: |
+          if [ "${{ inputs.draft }}" = "true" ]; then
+            npx chrome-webstore-upload-cli@4 upload --source pagelens-store.zip
+          else
+            npx chrome-webstore-upload-cli@4 --source pagelens-store.zip
+          fi
