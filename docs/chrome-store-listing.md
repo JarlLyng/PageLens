@@ -134,16 +134,25 @@ After the first manual submission, updates publish automatically via
 [`.github/workflows/publish-extension.yml`](../.github/workflows/publish-extension.yml)
 using the Chrome Web Store API.
 
-**One-time setup** — add three repo secrets (reusable across all your
+**One-time setup** — add four repo secrets (reusable across all your
 extensions; copy them from your other extension's repo):
 
 ```bash
 gh secret set CHROME_CLIENT_ID
 gh secret set CHROME_CLIENT_SECRET
 gh secret set CHROME_REFRESH_TOKEN
+gh secret set CHROME_PUBLISHER_ID
 ```
 
-(The extension ID is public and hardcoded in the workflow.)
+The extension ID is public (it is in the store URL) and hardcoded in the
+workflow. The publisher ID — from the Developer Dashboard's settings page — is
+not published anywhere, so it goes in a secret even though it identifies rather
+than authenticates.
+
+> **Not yet configured.** `gh secret list` currently shows only
+> `CHROME_CLIENT_ID` and `CHROME_CLIENT_SECRET`. Until the other two exist, a
+> tag push starts this workflow and it fails at the upload step. That is why
+> the repo has no tags despite two published versions — see issue #71.
 
 **To ship an update:**
 

@@ -3,10 +3,13 @@ name: Publish extension
 # Publishes the store build (no `debugger`) to the Chrome Web Store.
 # Triggered by pushing a version tag (e.g. v1.0.1) or manually.
 #
-# Requires three repo secrets (reusable across all your extensions — copy them
+# Requires four repo secrets (reusable across all your extensions — copy them
 # from your other extension's repo):
-#   CHROME_CLIENT_ID, CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN
-# The extension ID is public, so it's hardcoded below.
+#   CHROME_CLIENT_ID, CHROME_CLIENT_SECRET, CHROME_REFRESH_TOKEN,
+#   CHROME_PUBLISHER_ID
+# The extension ID is public (it's in the store URL), so it's hardcoded below.
+# The publisher ID is not published anywhere, so it goes in a secret even
+# though it identifies rather than authenticates.
 
 on:
   push:
@@ -47,10 +50,18 @@ jobs:
       - name: Build & package store build
         run: npm run package:store # → pagelens-store.zip (debugger-free)
 
+      # CLI v4 targets Chrome Web Store API V2. V1, which v3 used, is retired
+      # on 15 October 2026 (developer.chrome.com/blog/cws-api-v2).
+      #
+      # v4 dropped --auto-publish: the bare command uploads *and* publishes,
+      # while `upload` on its own leaves a draft. So the subcommand is gone
+      # from the line below rather than replaced — adding `upload` back here
+      # would silently stop releasing.
       - name: Upload & publish to Chrome Web Store
         env:
           EXTENSION_ID: mkajolhhjdlpmjlgdfnmbhfpbbeebgja
+          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
           CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-        run: npx chrome-webstore-upload-cli@3 upload --source pagelens-store.zip --auto-publish
+        run: npx chrome-webstore-upload-cli@4 --source pagelens-store.zip
