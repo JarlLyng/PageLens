@@ -226,10 +226,37 @@
         border-top: 1px solid var(--border);
         margin: 48px 0;
       }
-      footer.site {
+      /*
+       * The portfolio footer, <ij-footer> from the design system. Its own styles
+       * live in a shadow root and read the --ij-* tokens, falling back to the
+       * design system's values when the page sets none. This page does not load
+       * the token sheet, so its own palette is mapped on here — otherwise the
+       * footer would follow the OS theme rather than the page.
+       */
+      .site-footer {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 16px 24px 40px;
+      }
+      ij-footer {
+        --ij-color-text-primary: var(--text);
+        --ij-color-text-secondary: var(--text-2);
+        --ij-color-border-subtle: var(--border);
+        --ij-color-primary: var(--primary);
+      }
+      /* Before the script upgrades it, and for crawlers that never run it:
+         without this the slotted links run together into one line. */
+      ij-footer:not(:defined) {
+        display: block;
         border-top: 1px solid var(--border);
+        padding-top: 1.5rem;
         color: var(--text-3);
         font-size: 0.9rem;
+      }
+      ij-footer:not(:defined) > a {
+        display: inline-block;
+        margin: 0 1rem 0.5rem 0;
+        color: var(--text);
       }
     </style>
   </head>
@@ -571,11 +598,52 @@
       <p class="muted"><a href="/">← Back to PageLens</a></p>
     </main>
 
-    <footer class="site">
-      <div class="bar">
-        <span>© 2026 IAMJARL</span>
-        <a href="/privacy.html">Privacy</a>
-      </div>
-    </footer>
+    <!--
+      The cross-links, the year and the component script are filled in at
+      build time by the pagelens:inline-cross-links plugin (vite.config.ts) —
+      this file sits in public/ and is otherwise copied as is. The anchors
+      must stay direct children of <ij-footer> to be slotted.
+    -->
+    <div class="site-footer">
+      <ij-footer
+        app="pagelens"
+        tagline="See the carbon footprint of any web page."
+        links-label="PageLens"
+      >
+        <a
+          slot="links"
+          href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja"
+          data-umami-event="store-click"
+          data-umami-event-store="chrome-web-store"
+          data-umami-event-placement="footer"
+          data-umami-event-locale="en"
+          >Add to Chrome</a
+        >
+        <a slot="links" href="/guide/">Guide</a>
+        <a slot="links" href="/#faq">FAQ</a>
+        <a slot="links" href="/privacy.html">Privacy</a>
+
+        <!-- @ij-cross-links -->
+
+        <p slot="fineprint">
+          &copy;
+          <!-- @ij-year -->
+          IAMJARL &middot; Powered by
+          <a href="https://www.thegreenwebfoundation.org/co2-js/">CO2.js</a>
+          &amp;
+          <a href="https://www.thegreenwebfoundation.org/"
+            >The Green Web Foundation</a
+          >
+        </p>
+
+        <!-- Unslotted: shown only if the component script never loads. -->
+        <p>
+          &copy;
+          <!-- @ij-year -->
+          IAMJARL
+        </p>
+      </ij-footer>
+    </div>
+    <!-- @ij-footer-script -->
   </body>
 </html>

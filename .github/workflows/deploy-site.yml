@@ -25,6 +25,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # Full history: the build dates each sitemap URL from the last commit
+          # that touched its source (site/vite.config.ts, #80). A shallow clone
+          # knows only the newest commit, and the build would then drop
+          # <lastmod> rather than give every page today's date.
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
