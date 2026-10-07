@@ -17,10 +17,12 @@ All notable changes to PageLens are documented here. The format is based on
 
 ### Internal
 
-- Dependency housekeeping: Vite 7 for the extension build, design system
-  v1.9.0, tldts 7.4.12, `@types/chrome` 0.2.9, eslint 10.10.0.
-- Publish workflow moved to Chrome Web Store API V2 (`chrome-webstore-upload-cli`
-  v4) ahead of Google retiring V1 on 15 October 2026.
+- Dependency housekeeping: Vite 7 for the extension build, vitest 5, design
+  system v1.18.1, tldts 7.4.14, `@types/chrome` 0.3.0, eslint 10.10.0. Clears
+  every open Dependabot alert; all of them were in build and test tooling.
+- Publish workflow moved to Chrome Web Store API V2 ahead of Google retiring V1
+  on 15 October 2026, and to keyless authentication: GitHub's OIDC token through
+  Workload Identity Federation, so there is no refresh token to expire.
 
 ## [1.1.0] - 2026-07-18
 

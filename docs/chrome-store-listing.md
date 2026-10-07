@@ -132,27 +132,26 @@ and one scrolled to the recommendations list.
 
 After the first manual submission, updates publish automatically via
 [`.github/workflows/publish-extension.yml`](../.github/workflows/publish-extension.yml)
-using the Chrome Web Store API.
+using Chrome Web Store API V2 (`scripts/cws.mjs`).
 
-**One-time setup** — add four repo secrets (reusable across all your
-extensions; copy them from your other extension's repo):
+**Authentication is keyless.** GitHub's own OIDC token is exchanged, through
+Workload Identity Federation, for a short-lived Google access token for the
+service account `cws-publisher@iamjarl.iam.gserviceaccount.com`, which the
+Developer Dashboard lists as this publisher's. There is no client secret and no
+refresh token, so nothing expires after 7 days and nothing needs rotating. The
+same service account publishes JarlLyng/BotLens; Google accepts the token only
+from those two repos.
+
+**Setup** is three repository _variables_ — none of them is a credential:
 
 ```bash
-gh secret set CHROME_CLIENT_ID
-gh secret set CHROME_CLIENT_SECRET
-gh secret set CHROME_REFRESH_TOKEN
-gh secret set CHROME_PUBLISHER_ID
+gh variable set CWS_WIF_PROVIDER     # projects/…/workloadIdentityPools/github/providers/jarllyng
+gh variable set CWS_SERVICE_ACCOUNT  # cws-publisher@iamjarl.iam.gserviceaccount.com
+gh variable set CWS_PUBLISHER_ID     # same publisher as BotLens
 ```
 
 The extension ID is public (it is in the store URL) and hardcoded in the
-workflow. The publisher ID — from the Developer Dashboard's settings page — is
-not published anywhere, so it goes in a secret even though it identifies rather
-than authenticates.
-
-> **Not yet configured.** `gh secret list` currently shows only
-> `CHROME_CLIENT_ID` and `CHROME_CLIENT_SECRET`. Until the other two exist, a
-> tag push starts this workflow and it fails at the upload step. That is why
-> the repo has no tags despite two published versions — see issue #71.
+workflow.
 
 **To ship an update:**
 
@@ -167,17 +166,14 @@ The workflow type-checks, tests, builds the debugger-free store zip, and
 uploads + submits it for review. The version tag must match `package.json`
 (the workflow fails otherwise).
 
-**Checking the credentials without releasing:** run it manually from the
-Actions tab (**workflow_dispatch**). The `draft` input is ticked by default, so
-a manual run uploads a draft and submits nothing. Untick it only when you mean
-to publish from a manual run.
+**Checking authentication without releasing:** run the workflow manually from
+the Actions tab (**workflow_dispatch**). Its `mode` input defaults to `check`,
+which only asks the API for the item's status and changes nothing. `draft`
+uploads without submitting; `publish` uploads and submits for review.
 
-Expect that draft test to be refused if `package.json` still holds the version
-that is already live — the store takes only a higher version. That refusal is
-good news: it comes _after_ Google has accepted the credentials. A credentials
-problem fails earlier and reads differently (`invalid_grant`, or "OAuth client
-was not found"). So the cleanest time to run it is right after bumping the
-version for the next release, before tagging.
+A `draft` run with `package.json` still on the version that is already live will
+be refused — the store only takes a higher version. That refusal comes _after_
+Google has accepted the authentication, so it is not a credentials problem.
 
 > **Smoke-test before you push the tag.** This path uploads _and submits_ with
 > no human in the loop, and nothing in it ever loads the extension — a build
