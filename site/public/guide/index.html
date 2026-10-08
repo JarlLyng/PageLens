@@ -258,14 +258,26 @@
         margin: 0 1rem 0.5rem 0;
         color: var(--text);
       }
+      h1,
+      h2,
+      h3,
+      .wordmark {
+        font-family: var(--ij-font-display, inherit);
+      }
     </style>
+    <!--
+      The web-tools display face (#84) for the headings and the wordmark:
+      the design system's @font-face and --ij-font-display, filled in at
+      build time with the url of the woff2 Vite emits (vite.config.ts).
+    -->
+    <!-- @ij-display-face -->
   </head>
   <body>
     <header class="site">
       <div class="bar">
         <a class="brand" href="/">
           <span class="logo">P</span>
-          <strong>PageLens</strong>
+          <strong class="wordmark">PageLens</strong>
         </a>
         <a
           class="cta"

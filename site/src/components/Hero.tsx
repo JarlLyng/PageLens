@@ -13,7 +13,7 @@ export function Hero() {
           <span className="grid h-8 w-8 place-items-center rounded-ij-sm bg-ij-primary font-bold text-ij-on-primary">
             P
           </span>
-          <span className="text-lg font-semibold">PageLens</span>
+          <span className="wordmark text-lg font-semibold">PageLens</span>
         </div>
         <a
           href={STORE_URL}

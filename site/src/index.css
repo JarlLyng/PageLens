@@ -67,6 +67,18 @@
   --container-content: 1080px;
 }
 
+@layer base {
+  /* Outfit is the voice, not the text (#84): the headings and the wordmark.
+     Body copy keeps the UI stack. In the base layer so a utility can still
+     override it where needed. */
+  h1,
+  h2,
+  h3,
+  .wordmark {
+    font-family: var(--ij-font-display);
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }

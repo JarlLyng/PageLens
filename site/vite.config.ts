@@ -104,6 +104,42 @@ const componentFile = `assets/ij-footer-${createHash('sha256')
   .slice(0, 8)}.js`
 
 /**
+ * The display face for the static pages (#84). The home page imports the
+ * design system's sheets from main.tsx and Vite emits the woff2; these pages
+ * load no bundle, so they get the same two sheets inlined into <head>, with the
+ * font's relative url() pointed at the file Vite emitted. One font file, one
+ * source, for every page.
+ */
+const DISPLAY_FACE_PLACEHOLDER = '<!-- @ij-display-face -->'
+const FONT_BASENAME = 'outfit-latin-wght-normal'
+const outfitCss = readFileSync(
+  require.resolve('@iamjarl/design-tokens/fonts/outfit.css'),
+  'utf8',
+)
+const identityCss = readFileSync(
+  require.resolve('@iamjarl/design-tokens/identity/pagelens.css'),
+  'utf8',
+)
+
+function displayFaceStyle(fontUrl: string): string {
+  const fontFace = outfitCss.replace(
+    /url\((['"]?)[^'")]*outfit-latin-wght-normal\.woff2\1\)/,
+    `url('${fontUrl}')`,
+  )
+  if (fontFace === outfitCss) {
+    throw new Error(
+      "Could not find the woff2 url() in the design system's outfit.css — " +
+        'its format changed.',
+    )
+  }
+  const css = (fontFace + identityCss)
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\n\s*\n+/g, '\n')
+    .trim()
+  return `<style>\n${css}\n</style>`
+}
+
+/**
  * Where each sitemap URL's content comes from, relative to site/. The sitemap
  * carries no hand-written <lastmod>: a date typed once in July and never
  * updated told Google there was nothing new to crawl (#80). It is taken from
@@ -159,6 +195,8 @@ function buildSitemap(xml: string, dates: Record<string, string> | null) {
 }
 
 function pagelensBuild(): Plugin {
+  // Set in generateBundle, once Vite has named the woff2 it emitted.
+  let fontFile: string | undefined
   return {
     name: 'pagelens:inline-cross-links',
 
@@ -168,7 +206,10 @@ function pagelensBuild(): Plugin {
       return ctx.server ? filled : stripComments(filled)
     },
 
-    generateBundle() {
+    generateBundle(_options, bundle) {
+      fontFile = Object.keys(bundle).find(
+        (name) => name.includes(FONT_BASENAME) && name.endsWith('.woff2'),
+      )
       this.emitFile({
         type: 'asset',
         fileName: componentFile,
@@ -182,7 +223,15 @@ function pagelensBuild(): Plugin {
     writeBundle({ dir }) {
       if (!dir) return
 
-      const script = `<script type="module" src="${base.replace(/\/?$/, '/')}${componentFile}"></script>`
+      const root = base.replace(/\/?$/, '/')
+      if (!fontFile) {
+        throw new Error(
+          `No ${FONT_BASENAME}.woff2 in the bundle — is the design system's ` +
+            `fonts/outfit.css still imported from main.tsx?`,
+        )
+      }
+      const face = displayFaceStyle(`${root}${fontFile}`)
+      const script = `<script type="module" src="${root}${componentFile}"></script>`
       for (const page of STATIC_PAGES) {
         const file = join(dir, page)
         const html = readFileSync(file, 'utf8')
@@ -192,10 +241,18 @@ function pagelensBuild(): Plugin {
               `footer would never upgrade.`,
           )
         }
+        if (!html.includes(DISPLAY_FACE_PLACEHOLDER)) {
+          throw new Error(
+            `${page} is missing the ${DISPLAY_FACE_PLACEHOLDER} placeholder — ` +
+              `its headings would fall back to the system font.`,
+          )
+        }
         writeFileSync(
           file,
           stripComments(
-            fillFooter(html, page).replace(SCRIPT_PLACEHOLDER, script),
+            fillFooter(html, page)
+              .replace(SCRIPT_PLACEHOLDER, script)
+              .replace(DISPLAY_FACE_PLACEHOLDER, face),
           ),
         )
       }
