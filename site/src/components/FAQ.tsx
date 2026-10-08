@@ -24,6 +24,10 @@ export const FAQ_ITEMS = [
     q: 'Is the carbon estimate exact?',
     a: 'No — it is an actionable estimate, not a precise measurement. PageLens is transparent about its methodology and clearly flags any figure it has to approximate, such as cross-origin resources without timing data.',
   },
+  {
+    q: 'How do I send feedback or report a problem?',
+    a: 'Email support@iamjarl.com — or use “Send feedback” at the bottom of the PageLens popup, which fills in your version for you. Every message is read. If you would rather report it in public, GitHub issues are open too.',
+  },
 ]
 
 export function FAQ() {

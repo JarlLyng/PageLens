@@ -4,7 +4,14 @@ All notable changes to PageLens are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.0] - 2026-10-08
+
+### Added
+
+- **Send feedback** at the bottom of the popup, on every screen including
+  errors. It opens an email to support@iamjarl.com with the version prefilled in
+  the subject — and nothing else: no page URL, nothing from the page you were
+  on.
 
 ### Fixed
 

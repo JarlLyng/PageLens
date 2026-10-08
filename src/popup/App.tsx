@@ -7,6 +7,7 @@ import { WeightBreakdownView } from './components/WeightBreakdown'
 import { Recommendations } from './components/Recommendations'
 import { Methodology } from './components/Methodology'
 import { ScanModeBar } from './components/ScanModeBar'
+import { FeedbackLink } from './components/FeedbackLink'
 import { setMonthlyVisits } from '@/lib/settings'
 
 function hostnameOf(url: string): string {
@@ -92,6 +93,8 @@ export function App() {
           <Methodology />
         </>
       )}
+
+      <FeedbackLink />
     </main>
   )
 }

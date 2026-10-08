@@ -110,6 +110,12 @@ See [docs/chrome-store-listing.md](docs/chrome-store-listing.md) for the full
 release process and [PRIVACY.md](PRIVACY.md) /
 [the hosted policy](https://pagelens.iamjarl.com/privacy.html).
 
+## Feedback & support
+
+Email **support@iamjarl.com**, or use **Send feedback** at the bottom of the
+popup, which fills in your version. Bug reports and ideas are just as welcome as
+[GitHub issues](https://github.com/JarlLyng/PageLens/issues).
+
 ## Contributing
 
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and the

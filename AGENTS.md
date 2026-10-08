@@ -16,7 +16,7 @@ the extension, no tracking.
 - **Website:** [pagelens.iamjarl.com](https://pagelens.iamjarl.com)
 - **License:** [MIT](LICENSE) — open source.
 - **Price:** Free (no in-app purchases, no subscription, no ads)
-- **Status:** Launched — [Chrome Web Store](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja) (item `mkajolhhjdlpmjlgdfnmbhfpbbeebgja`). Current version `1.1.0` (see [CHANGELOG](CHANGELOG.md)).
+- **Status:** Launched — [Chrome Web Store](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja) (item `mkajolhhjdlpmjlgdfnmbhfpbbeebgja`). Current version `1.2.0` (see [CHANGELOG](CHANGELOG.md)).
 - **The outlier:** unlike most IAMJARL apps (native Apple, pay-once), PageLens
   is a free, open-source web extension — chosen deliberately for its use case.
 
@@ -52,6 +52,8 @@ here. This public repo keeps only code, normal OSS docs, and the marketing site.
   coverage + CSS rule-usage). Not in the published store build.
 - **Configurable monthly visits** for the yearly carbon projection (stored via
   `chrome.storage`).
+- **Send feedback** link at the bottom of the popup: a `mailto:` to
+  `support@iamjarl.com` with only the version in the subject — no page URL.
 
 ### Features that do NOT exist (common hallucination targets)
 
