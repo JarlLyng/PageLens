@@ -1,14 +1,21 @@
 version: 2
+# Every entry waits a week before proposing a new version (`cooldown`):
+# malicious releases are usually found and pulled within days (#93). Version
+# updates only; security updates still arrive at once.
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
   - package-ecosystem: npm
     directory: /site
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     ignore:
       # React 19 measured at +14.5 kB gzip (+26%) on the built site, for no
@@ -29,3 +36,5 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
