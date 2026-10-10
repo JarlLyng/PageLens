@@ -1,10 +1,10 @@
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { defineConfig, type Plugin } from 'vite'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { build, defineConfig, type Plugin, type Rollup } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // Served from the root of the custom domain (pagelens.iamjarl.com).
@@ -81,6 +81,53 @@ function fillFooter(html: string, page: string): string {
  */
 function stripComments(html: string): string {
   return html.replace(/<!--[\s\S]*?-->/g, '').replace(/\n\s*\n+/g, '\n')
+}
+
+const PRERENDER_PLACEHOLDER = '<!-- @ij-prerender -->'
+
+/**
+ * The home page rendered to HTML, for #root in the served index.html (#92).
+ *
+ * Without this the home served a few hundred readable characters to anything
+ * that does not run JavaScript; features, how-it-works and the FAQ appeared
+ * only after the bundle ran. This builds src/entry-server.tsx for Node with
+ * the same define as the client, runs it once, and returns the markup. The
+ * client then hydrates that markup rather than replacing it.
+ *
+ * A separate, config-less build, so this plugin does not run inside itself.
+ */
+async function prerender(): Promise<string> {
+  const result = (await build({
+    configFile: false,
+    root: siteDir,
+    logLevel: 'warn',
+    plugins: [react()],
+    define: { __IJ_CROSS_LINKS__: JSON.stringify(crossLinks) },
+    build: { ssr: 'src/entry-server.tsx', write: false, minify: false },
+  })) as Rollup.RollupOutput
+  const chunks = result.output.filter((file) => file.type === 'chunk')
+  if (chunks.length !== 1) {
+    throw new Error(`Prerender built ${chunks.length} chunks, expected 1.`)
+  }
+
+  // Written inside node_modules so that the bundle's bare imports (react,
+  // react-dom/server) resolve to this site's own copies.
+  const dir = join(siteDir, 'node_modules', '.cache', 'pagelens-prerender')
+  mkdirSync(dir, { recursive: true })
+  const file = join(dir, `entry-server-${process.pid}-${Date.now()}.mjs`)
+  writeFileSync(file, chunks[0].code)
+  try {
+    const { render } = (await import(pathToFileURL(file).href)) as {
+      render: () => string
+    }
+    const html = render()
+    if (!html.includes('<h1') || !html.includes('id="faq"')) {
+      throw new Error('Prerendered home is missing the hero or the FAQ.')
+    }
+    return html
+  } finally {
+    rmSync(file, { force: true })
+  }
 }
 
 /**
@@ -200,10 +247,20 @@ function pagelensBuild(): Plugin {
   return {
     name: 'pagelens:inline-cross-links',
 
-    transformIndexHtml(html, ctx) {
-      const filled = fillFooter(html, 'index.html')
-      // Dev keeps the comments, so view-source still explains itself.
-      return ctx.server ? filled : stripComments(filled)
+    // The dev server leaves #root empty and main.tsx renders from scratch.
+    async transformIndexHtml(html, ctx) {
+      if (ctx.server) return html
+      const parts = html.split(PRERENDER_PLACEHOLDER)
+      if (parts.length !== 2) {
+        throw new Error(
+          `index.html must contain ${PRERENDER_PLACEHOLDER} exactly once, ` +
+            `inside #root.`,
+        )
+      }
+      // Comments are stripped around the rendered markup, not from it: React
+      // separates adjacent text with <!-- --> and hydration relies on them.
+      const [before, after] = parts.map(stripComments)
+      return before + (await prerender()) + after
     },
 
     generateBundle(_options, bundle) {

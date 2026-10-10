@@ -140,86 +140,12 @@
   </head>
   <body>
     <!--
-      Pre-JS content. React replaces everything inside #root on mount
-      (createRoot().render() does not hydrate, it overwrites), so a visitor
-      never sees this — but GPTBot, ClaudeBot, CCBot and PerplexityBot do not
-      execute JavaScript, and without this they get the <title> and nothing
-      else.
-
-      The built CSS is a real <link> in <head>, so these are the Hero's own
-      classes and the pre-JS paint already looks right.
-
-      Deliberately only the headline, subhead and primary CTA: the parts that
-      change rarely. This duplicates src/components/Hero.tsx — keep the two in
-      sync, and do not grow this into a mirror of the whole page.
+      The build renders the whole home page into #root (prerender() in
+      vite.config.ts, #92), so a client that runs no JavaScript gets
+      the full text: GPTBot, ClaudeBot, CCBot and PerplexityBot, among others.
+      main.tsx then hydrates it. The dev server leaves #root empty.
     -->
-    <div id="root">
-      <div class="mx-auto max-w-content px-6 py-16">
-        <h1 class="text-4xl font-bold leading-tight md:text-5xl">
-          See the carbon footprint of any web page.
-        </h1>
-        <p class="mt-6 max-w-md text-lg text-ij-text-secondary">
-          PageLens estimates a page&rsquo;s digital emissions and turns them
-          into an actionable A&ndash;F Eco Score &mdash; with concrete ways to
-          make the web lighter. Free Chrome extension, no account, no tracking.
-        </p>
-        <p class="mt-6">
-          <a
-            class="rounded-ij-md bg-ij-primary px-5 py-3 font-semibold text-ij-on-primary"
-            href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja"
-            >Add to Chrome &mdash; free</a
-          >
-        </p>
-      </div>
-
-      <!--
-        The footer, mirroring src/components/Footer.tsx. Unlike the hero above,
-        this is not only about the text: <ij-footer> can build the portfolio
-        cross-links itself, but only after JavaScript runs. The anchors below
-        are inlined from the design system's pre-rendered fragment by the
-        pagelens:inline-cross-links plugin in vite.config.ts, which is what
-        puts them in the served HTML.
-
-        The anchors must stay DIRECT children of <ij-footer> — a wrapper
-        element would not be projected into the slot.
-      -->
-      <div class="mx-auto max-w-content px-6 pb-10">
-        <ij-footer
-          app="pagelens"
-          tagline="See the carbon footprint of any web page."
-          links-label="PageLens"
-        >
-          <a
-            slot="links"
-            href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja"
-            >Add to Chrome</a
-          >
-          <a slot="links" href="/guide/">Guide</a>
-          <a slot="links" href="#faq">FAQ</a>
-          <a slot="links" href="/privacy.html">Privacy</a>
-
-          <!-- @ij-cross-links -->
-
-          <p slot="fineprint">
-            &copy;
-            <!-- @ij-year -->
-            IAMJARL &middot; Powered by
-            <a href="https://www.thegreenwebfoundation.org/co2-js/">CO2.js</a>
-            &amp;
-            <a href="https://www.thegreenwebfoundation.org/"
-              >The Green Web Foundation</a
-            >
-          </p>
-
-          <!-- Unslotted: shown only if the component script never loads. -->
-          <p>
-            &copy;
-            <!-- @ij-year -->
-            IAMJARL
-          </p>
-        </ij-footer>
-      </div>
-    </div>
+    <div id="root"><!-- @ij-prerender --></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

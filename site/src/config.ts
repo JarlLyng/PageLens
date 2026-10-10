@@ -2,6 +2,9 @@
 export const STORE_URL =
   'https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja'
 
+// The source, for the header (#92). The methodology is the product's argument.
+export const GITHUB_URL = 'https://github.com/JarlLyng/PageLens'
+
 /** Where on the page a store link sits, for attributing the click. */
 export type StorePlacement = 'header' | 'hero' | 'midpage' | 'footer'
 

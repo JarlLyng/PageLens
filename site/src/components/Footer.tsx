@@ -3,20 +3,22 @@ import { STORE_URL, storeClickAttrs } from '../config'
 // The portfolio cross-links are not written out here: they come from the
 // design system's pre-rendered fragment, inlined at build time by the
 // pagelens:inline-cross-links plugin in vite.config.ts and handed to this
-// component as __IJ_CROSS_LINKS__. One source feeds both this footer and the
-// pre-JS copy in index.html, so the two cannot drift.
+// component as __IJ_CROSS_LINKS__. The same fragment feeds the footers on the
+// guide and privacy pages, so they cannot drift.
 //
-// <ij-footer> would happily build these links itself, and did until now. But
-// links it builds exist only after JavaScript runs, and the crawlers that
-// matter for discovery do not run JavaScript — the same reason the hero has a
-// pre-JS copy (#47). Providing them switches the component to its slotted
-// path, so they are not rendered twice.
+// <ij-footer> would happily build these links itself, but links it builds
+// exist only after JavaScript runs, and the crawlers that matter for discovery
+// do not run JavaScript. Rendered here, they are in the prerendered HTML
+// (#92). Providing them also switches the component to its slotted path, so
+// they are not rendered twice.
 //
 // The unslotted children at the end are the pre-upgrade fallback: custom
 // elements render their own children until they upgrade, so that markup is
 // what a visitor sees if the component script never loads.
 export function Footer() {
-  const year = new Date().getFullYear()
+  // Prerendered at build time, so after New Year the served HTML can be a
+  // year behind until the next deploy; the client corrects it on hydration.
+  const year = <span suppressHydrationWarning>{new Date().getFullYear()}</span>
 
   // The component brings its own top border and vertical rhythm, but no
   // horizontal padding or max-width — by design, so each site frames it with

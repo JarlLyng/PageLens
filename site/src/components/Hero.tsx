@@ -1,10 +1,6 @@
 import { PopupMock } from './PopupMock'
-import { STORE_URL, storeClickAttrs } from '../config'
+import { GITHUB_URL, STORE_URL, storeClickAttrs } from '../config'
 
-// The headline, subhead and primary CTA below are duplicated as pre-JS
-// fallback markup in index.html, so that crawlers which do not run JavaScript
-// see real content instead of an empty #root. If you change the wording here,
-// change it there too.
 export function Hero() {
   return (
     <header className="border-b border-ij-border">
@@ -15,15 +11,30 @@ export function Hero() {
           </span>
           <span className="wordmark text-lg font-semibold">PageLens</span>
         </div>
-        <a
-          href={STORE_URL}
-          target="_blank"
-          rel="noopener"
-          {...storeClickAttrs('header')}
-          className="rounded-ij-md bg-ij-primary px-4 py-2 text-sm font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
-        >
-          Add to Chrome
-        </a>
+        <div className="flex items-center gap-4 sm:gap-6">
+          <a
+            href="/guide/"
+            className="text-sm font-medium text-ij-text-secondary transition-colors hover:text-ij-text"
+          >
+            Guide
+          </a>
+          {/* Below sm there is room for one text link beside the button. */}
+          <a
+            href={GITHUB_URL}
+            className="hidden text-sm font-medium sm:inline text-ij-text-secondary transition-colors hover:text-ij-text"
+          >
+            GitHub
+          </a>
+          <a
+            href={STORE_URL}
+            target="_blank"
+            rel="noopener"
+            {...storeClickAttrs('header')}
+            className="whitespace-nowrap rounded-ij-md bg-ij-primary px-4 py-2 text-sm font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
+          >
+            Add to Chrome
+          </a>
+        </div>
       </nav>
 
       <div className="mx-auto grid max-w-content items-center gap-12 px-6 py-16 md:grid-cols-2 md:py-24">
