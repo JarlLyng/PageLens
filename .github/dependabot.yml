@@ -10,6 +10,19 @@ updates:
     cooldown:
       default-days: 7
     open-pull-requests-limit: 5
+    ignore:
+      # React 19 for the popup buys nothing it needs, and the bump only works
+      # as react + react-dom + both type packages at once; Dependabot splits
+      # them into PRs that each fail to install (#86, #97). Delete these to
+      # reconsider, and do it as one change tested in Chrome.
+      - dependency-name: react
+        update-types: ['version-update:semver-major']
+      - dependency-name: react-dom
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react-dom'
+        update-types: ['version-update:semver-major']
   - package-ecosystem: npm
     directory: /site
     schedule:
