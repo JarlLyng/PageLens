@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -87,7 +87,9 @@
        * live in a shadow root and read the --ij-* tokens, falling back to the
        * design system's values when the page sets none. This page does not load
        * the token sheet, so its own palette is mapped on here — otherwise the
-       * footer would follow the OS theme rather than the page.
+       * footer would follow the OS theme rather than the page. For the same
+       * reason <html> carries class="light": it holds the identity sheet's
+       * accent, which the footer's hover takes, at its light value.
        */
       .site-footer {
         max-width: 720px;
@@ -97,6 +99,7 @@
       ij-footer {
         --ij-color-text-primary: var(--text);
         --ij-color-text-secondary: var(--muted);
+        --ij-color-text-tertiary: var(--muted);
         --ij-color-border-subtle: var(--border);
         --ij-color-primary: var(--primary);
       }

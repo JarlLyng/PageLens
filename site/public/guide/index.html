@@ -62,7 +62,8 @@
         --on-primary: #ffffff;
         --text: #111111;
         --text-2: rgba(0, 0, 0, 0.66);
-        --text-3: rgba(0, 0, 0, 0.5);
+        /* 0.55, the design system's tertiary: 0.5 was 3.95:1 on white. */
+        --text-3: rgba(0, 0, 0, 0.55);
         --bg: #ffffff;
         --card: rgba(0, 0, 0, 0.035);
         --border: rgba(0, 0, 0, 0.12);
@@ -241,6 +242,7 @@
       ij-footer {
         --ij-color-text-primary: var(--text);
         --ij-color-text-secondary: var(--text-2);
+        --ij-color-text-tertiary: var(--text-3);
         --ij-color-border-subtle: var(--border);
         --ij-color-primary: var(--primary);
       }
