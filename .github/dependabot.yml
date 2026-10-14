@@ -11,6 +11,10 @@ updates:
       default-days: 7
     open-pull-requests-limit: 5
     ignore:
+      # The design system is moved by hand: it opens an issue here for each
+      # release that matters (#103). Dependabot also cannot order its git
+      # tags against the cooldown, so it proposed downgrades (#91, #99).
+      - dependency-name: '@iamjarl/design-tokens'
       # React 19 for the popup buys nothing it needs, and the bump only works
       # as react + react-dom + both type packages at once; Dependabot splits
       # them into PRs that each fail to install (#86, #97). Delete these to
@@ -31,6 +35,8 @@ updates:
       default-days: 7
     open-pull-requests-limit: 5
     ignore:
+      # Moved by hand, as in the root package above.
+      - dependency-name: '@iamjarl/design-tokens'
       # React 19 measured at +14.5 kB gzip (+26%) on the built site, for no
       # gain: its custom-element improvements are properties and events, and
       # <ij-footer> has an attributes-only API that React 18 already handles.
