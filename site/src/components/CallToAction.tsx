@@ -1,4 +1,4 @@
-import { STORE_URL, storeClickAttrs } from '../config'
+import { StoreBadge } from './StoreBadge'
 
 export function CallToAction() {
   return (
@@ -9,15 +9,12 @@ export function CallToAction() {
           PageLens gives you an Eco Score for the page you&rsquo;re on in one
           click.
         </p>
-        <a
-          href={STORE_URL}
-          target="_blank"
-          rel="noopener"
-          {...storeClickAttrs('midpage')}
-          className="inline-block rounded-ij-md bg-ij-on-primary px-6 py-3 font-semibold text-ij-primary transition-transform hover:scale-105"
-        >
-          Add to Chrome — free
-        </a>
+        {/* The badge's facts line in the panel's own text colour: the page's
+            secondary text is not legible on the primary colour. */}
+        <StoreBadge
+          placement="midpage"
+          className="[&_.ij-store-facts]:text-ij-on-primary"
+        />
       </div>
     </section>
   )

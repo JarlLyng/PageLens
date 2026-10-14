@@ -23,6 +23,14 @@ import type { DetailedHTMLProps, HTMLAttributes } from 'react'
 // extension build uses.
 declare global {
   const __IJ_CROSS_LINKS__: ReadonlyArray<{ href: string; label: string }>
+  // The store button fragments and links, from the design system's registry
+  // (#102). See StoreLinks in vite.config.ts.
+  const __IJ_STORE__: {
+    hero: string
+    midpage: string
+    nav: Record<string, string>
+    footer: Record<string, string>
+  }
 }
 
 type IjFooterProps = DetailedHTMLProps<

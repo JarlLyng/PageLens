@@ -232,8 +232,10 @@
       <p class="muted"><a href="./">← Back to PageLens</a></p>
     </main>
     <!--
-      The cross-links, the year and the component script are filled in at
-      build time by the pagelens:inline-cross-links plugin (vite.config.ts) —
+      The cross-links, the year, the component script and the store links
+      (data-ij-store-link, @ij-store, from the design system's registry, #102)
+      are filled in at build time by the pagelens:inline-cross-links plugin
+      (vite.config.ts) —
       this file sits in public/ and is otherwise copied as is. The anchors
       must stay direct children of <ij-footer> to be slotted.
     -->
@@ -243,15 +245,7 @@
         tagline="See the carbon footprint of any web page."
         links-label="PageLens"
       >
-        <a
-          slot="links"
-          href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja"
-          data-umami-event="store-click"
-          data-umami-event-store="chrome-web-store"
-          data-umami-event-placement="footer"
-          data-umami-event-locale="en"
-          >Add to Chrome</a
-        >
+        <a slot="links" data-ij-store-link="footer">Add to Chrome</a>
         <a slot="links" href="/guide/">Guide</a>
         <a slot="links" href="/#faq">FAQ</a>
         <a slot="links" href="/privacy.html">Privacy</a>

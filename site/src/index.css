@@ -118,3 +118,23 @@ ij-footer:not(:defined) > [slot='cross-links'] {
      them readable as one here rather than merging with the site's own. */
   color: var(--ij-color-text-secondary);
 }
+
+@layer components {
+  /* The store fragment (#102) brings no styles; these are the design
+     system's defaults from its README. In the components layer so a
+     placement can recolour the facts line with a utility. */
+  .ij-store {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--ij-spacing-xs);
+  }
+  .ij-store-badge {
+    line-height: 0;
+  }
+  .ij-store .ij-store-facts {
+    margin: 0;
+    font-size: var(--ij-font-size-sm);
+    color: var(--ij-color-text-secondary);
+  }
+}

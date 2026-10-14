@@ -83,6 +83,113 @@ function stripComments(html: string): string {
   return html.replace(/<!--[\s\S]*?-->/g, '').replace(/\n\s*\n+/g, '\n')
 }
 
+/**
+ * The store button (#102): the design system's fragments, generated from its
+ * registry (apps.json), so the store link, the click event and the facts line
+ * have one source instead of being written out on every page.
+ *
+ * Two changes on the way in, and only these:
+ * - The badge is served from this site, not jsDelivr. The same reason the
+ *   display face is self-hosted: no third-party request on a page about
+ *   page weight. The files are the design system's own, content-hashed.
+ * - Nothing else is touched, including the first-line comment: the hub's
+ *   store check reads the fragment's version from it.
+ */
+const BADGES = ['chrome-web-store.png', 'chrome-web-store-border.png']
+const badgeFiles = Object.fromEntries(
+  BADGES.map((name) => {
+    const source = readFileSync(
+      require.resolve(`@iamjarl/design-tokens/badges/${name}`),
+    )
+    const file = `assets/${name.replace(/\.png$/, '')}-${createHash('sha256')
+      .update(source)
+      .digest('hex')
+      .slice(0, 8)}.png`
+    return [name, { file, source }]
+  }),
+)
+const BADGE_CDN =
+  /https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\/([\w.-]+)/g
+
+function readStoreFragment(name: string): string {
+  const path = require.resolve(`@iamjarl/design-tokens/store/${name}`)
+  const html = readFileSync(path, 'utf8')
+    .trim()
+    .replace(BADGE_CDN, (_match, badge: string) => {
+      const local = badgeFiles[badge]
+      if (!local)
+        throw new Error(`${name} uses a badge not in BADGES: ${badge}`)
+      return `${base.replace(/\/?$/, '/')}${local.file}`
+    })
+  if (html.includes('cdn.jsdelivr.net')) {
+    throw new Error(`${name} still loads something from jsDelivr.`)
+  }
+  return html
+}
+
+/**
+ * The href and click-event attributes of a fragment's link, for the places
+ * the design system says stay text links: a header call to action (one badge
+ * per layout) and the footer's own links.
+ */
+function readStoreLink(name: string): Record<string, string> {
+  const tag = readStoreFragment(name).match(/<a\b([^>]*)>/)
+  if (!tag) throw new Error(`No link in ${name}.`)
+  const attrs = Object.fromEntries(
+    [...tag[1].matchAll(/([\w-]+)="([^"]*)"/g)]
+      .filter(([, key]) => key === 'href' || key.startsWith('data-umami-'))
+      .map(([, key, value]) => [key, value.replaceAll('&amp;', '&')]),
+  )
+  if (!attrs.href || !attrs['data-umami-event']) {
+    throw new Error(`${name}: no href or click event — the format changed.`)
+  }
+  return attrs
+}
+
+export type StoreLinks = {
+  /** The hero badge; it follows the visitor's light or dark setting. */
+  hero: string
+  /** The badge for the closing call to action, on the primary colour. */
+  midpage: string
+  nav: Record<string, string>
+  footer: Record<string, string>
+}
+
+const store: StoreLinks = {
+  hero: readStoreFragment('pagelens.en.html'),
+  // The bordered badge, which the design system gives coloured grounds; the
+  // panel is the primary colour in both modes.
+  midpage: readStoreFragment('pagelens.en.midpage.white.html'),
+  nav: readStoreLink('pagelens.en.nav.html'),
+  footer: readStoreLink('pagelens.en.footer.html'),
+}
+
+const offer = JSON.parse(
+  readFileSync(
+    require.resolve('@iamjarl/design-tokens/store/pagelens.en.offer.json'),
+    'utf8',
+  ),
+) as Record<string, string>
+
+/** The JSON-LD offers value in index.html, filled from offer.json. */
+const OFFER_PLACEHOLDER = '"@ij-offer"'
+
+/** Static pages: a store fragment by file name, and a text link by role. */
+const STORE_FRAGMENT_PLACEHOLDER = /<!-- @ij-store ([\w.]+\.html) -->/g
+const STORE_LINK_ATTR = /data-ij-store-link="(nav|footer)"/g
+
+function attrString(attrs: Record<string, string>): string {
+  return Object.entries(attrs)
+    .map(([key, value]) => `${key}="${value.replaceAll('&', '&amp;')}"`)
+    .join(' ')
+}
+
+/** Same values for the client bundle and the prerender. */
+const sharedDefine = {
+  __IJ_CROSS_LINKS__: JSON.stringify(crossLinks),
+  __IJ_STORE__: JSON.stringify(store),
+}
+
 const PRERENDER_PLACEHOLDER = '<!-- @ij-prerender -->'
 
 /**
@@ -102,7 +209,7 @@ async function prerender(): Promise<string> {
     root: siteDir,
     logLevel: 'warn',
     plugins: [react()],
-    define: { __IJ_CROSS_LINKS__: JSON.stringify(crossLinks) },
+    define: sharedDefine,
     build: { ssr: 'src/entry-server.tsx', write: false, minify: false },
   })) as Rollup.RollupOutput
   const chunks = result.output.filter((file) => file.type === 'chunk')
@@ -241,6 +348,39 @@ function buildSitemap(xml: string, dates: Record<string, string> | null) {
   })
 }
 
+function fillOffer(html: string): string {
+  if (!html.includes(OFFER_PLACEHOLDER)) return html
+  return html.replace(OFFER_PLACEHOLDER, JSON.stringify(offer))
+}
+
+/**
+ * The store links and fragments on a static page, then comments stripped.
+ * The fragments go in after the strip, so their version comment survives.
+ */
+function fillStore(html: string, page: string): string {
+  // Every store link comes from the registry: a hand-written one is the drift
+  // #102 removed, so the source may not name the store at all.
+  if (html.includes('chromewebstore.google.com')) {
+    throw new Error(
+      `${page} has a hand-written Chrome Web Store link — use ` +
+        `data-ij-store-link="nav|footer" or <!-- @ij-store <fragment> -->.`,
+    )
+  }
+  const fragments: string[] = []
+  const marked = html
+    .replace(STORE_LINK_ATTR, (_match, role: 'nav' | 'footer') =>
+      attrString(store[role]),
+    )
+    .replace(STORE_FRAGMENT_PLACEHOLDER, (_match, name: string) => {
+      fragments.push(readStoreFragment(name))
+      return `\u0000ij-store-${fragments.length - 1}\u0000`
+    })
+  return stripComments(marked).replace(
+    /\u0000ij-store-(\d+)\u0000/g,
+    (_match, i: string) => fragments[Number(i)],
+  )
+}
+
 function pagelensBuild(): Plugin {
   // Set in generateBundle, once Vite has named the woff2 it emitted.
   let fontFile: string | undefined
@@ -258,8 +398,11 @@ function pagelensBuild(): Plugin {
         )
       }
       // Comments are stripped around the rendered markup, not from it: React
-      // separates adjacent text with <!-- --> and hydration relies on them.
-      const [before, after] = parts.map(stripComments)
+      // separates adjacent text with <!-- --> and hydration relies on them,
+      // and the store fragments keep their version comment.
+      const [before, after] = parts.map((part) =>
+        stripComments(fillOffer(part)),
+      )
       return before + (await prerender()) + after
     },
 
@@ -272,6 +415,9 @@ function pagelensBuild(): Plugin {
         fileName: componentFile,
         source: componentSource,
       })
+      for (const { file, source } of Object.values(badgeFiles)) {
+        this.emitFile({ type: 'asset', fileName: file, source })
+      }
     },
 
     // In dev, public/ is served untouched: the static pages show their
@@ -306,10 +452,11 @@ function pagelensBuild(): Plugin {
         }
         writeFileSync(
           file,
-          stripComments(
+          fillStore(
             fillFooter(html, page)
               .replace(SCRIPT_PLACEHOLDER, script)
               .replace(DISPLAY_FACE_PLACEHOLDER, face),
+            page,
           ),
         )
       }
@@ -330,8 +477,5 @@ function pagelensBuild(): Plugin {
 export default defineConfig({
   base,
   plugins: [react(), pagelensBuild()],
-  define: {
-    // Same links, same source, for the footer React renders after mount.
-    __IJ_CROSS_LINKS__: JSON.stringify(crossLinks),
-  },
+  define: sharedDefine,
 })

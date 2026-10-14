@@ -48,7 +48,9 @@
       content="PageLens — see the carbon footprint of any web page"
     />
 
-    <!-- Structured data (read by search engines and AI, no JS needed) -->
+    <!-- Structured data (read by search engines and AI, no JS needed).
+         "offers" is filled in at build time from the design system's
+         offer.json (#102), so the price has one source. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -63,7 +65,7 @@
           "name": "IAMJARL",
           "url": "https://iamjarl.com"
         },
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+        "offers": "@ij-offer"
       }
     </script>
     <script type="application/ld+json">

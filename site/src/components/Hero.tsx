@@ -1,5 +1,6 @@
 import { PopupMock } from './PopupMock'
-import { GITHUB_URL, STORE_URL, storeClickAttrs } from '../config'
+import { StoreBadge } from './StoreBadge'
+import { GITHUB_URL, storeLink } from '../config'
 
 export function Hero() {
   return (
@@ -25,11 +26,11 @@ export function Hero() {
           >
             GitHub
           </a>
+          {/* A text link, not a second badge: one badge per layout. */}
           <a
-            href={STORE_URL}
+            {...storeLink('nav')}
             target="_blank"
             rel="noopener"
-            {...storeClickAttrs('header')}
             className="whitespace-nowrap rounded-ij-md bg-ij-primary px-4 py-2 text-sm font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
           >
             Add to Chrome
@@ -53,26 +54,19 @@ export function Hero() {
             into an actionable A&ndash;F Eco Score — with concrete ways to make
             the web lighter.
           </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href={STORE_URL}
-              target="_blank"
-              rel="noopener"
-              {...storeClickAttrs('hero')}
-              className="rounded-ij-md bg-ij-primary px-5 py-3 font-semibold text-ij-on-primary transition-colors hover:bg-ij-primary-hover"
-            >
-              Add to Chrome — free
-            </a>
+          <div className="flex flex-wrap items-start gap-3">
+            <StoreBadge placement="hero" />
+            {/* The badge's height, which the store's rules set at 58px, so
+                the two sit level beside each other. */}
             <a
               href="#how"
-              className="rounded-ij-md border border-ij-border px-5 py-3 font-semibold text-ij-text transition-colors hover:border-ij-border-strong"
+              className="flex h-[58px] items-center rounded-ij-md border border-ij-border px-5 font-semibold text-ij-text transition-colors hover:border-ij-border-strong"
             >
               How it works
             </a>
           </div>
           <p className="text-xs text-ij-text-tertiary">
-            Free &amp; open methodology · Powered by CO2.js &amp; The Green Web
-            Foundation
+            Open methodology · Powered by CO2.js &amp; The Green Web Foundation
           </p>
         </div>
 
