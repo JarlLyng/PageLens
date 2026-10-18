@@ -15,7 +15,7 @@ import {
 import { computeEcoScore } from '@/core/score'
 import { collectPageResources } from '@/content/collector'
 import { checkGreenHosting } from '@/lib/greenweb'
-import { getMonthlyVisits } from '@/lib/settings'
+import { getMonthlyVisits, migrateSettingsFromSync } from '@/lib/settings'
 import type {
   AnalysisSnapshot,
   CoverageSummary,
@@ -26,6 +26,11 @@ import type { PageLensRequest, PageLensResponse } from '@/lib/messaging'
 
 chrome.runtime.onInstalled.addListener((details) => {
   console.info('[PageLens] service worker installed:', details.reason)
+  // Runs on install too: another profile on an older version may have put
+  // the setting in storage.sync, which Chrome then brings to this one.
+  migrateSettingsFromSync().catch((err: unknown) =>
+    console.warn('[PageLens] settings migration failed:', err),
+  )
 })
 
 function hostnameOf(url: string): string | null {

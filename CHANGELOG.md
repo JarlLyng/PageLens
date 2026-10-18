@@ -4,6 +4,16 @@ All notable changes to PageLens are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- The "monthly visits" setting is now stored on your device only, as the
+  privacy policy says. Up to 1.2.0 it was kept in `chrome.storage.sync`, so with
+  Chrome sync on, Chrome copied that one number to your Google account. The
+  update moves your value to local storage and deletes the synced copy. If you
+  use PageLens in several Chrome profiles, each one now keeps its own value.
+
 ## [1.2.0] - 2026-10-08
 
 ### Added

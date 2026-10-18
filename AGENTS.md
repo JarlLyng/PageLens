@@ -77,8 +77,8 @@ here. This public repo keeps only code, normal OSS docs, and the marketing site.
 - **Deep scan** (opt-in): attaches `chrome.debugger`, reloads the page, and
   measures **exact** transferred bytes plus **real unused JS & CSS** (V8 precise
   coverage + CSS rule-usage). Not in the published store build.
-- **Configurable monthly visits** for the yearly carbon projection (stored via
-  `chrome.storage`).
+- **Configurable monthly visits** for the yearly carbon projection (stored on
+  the device via `chrome.storage.local`).
 - **Send feedback** link at the bottom of the popup: a `mailto:` to
   `support@iamjarl.com` with only the version in the subject — no page URL.
 
@@ -118,5 +118,9 @@ The marketing site lives in [`site/`](site/) (its own `npm` project).
   tokens — no hardcoded colors/spacing/radius/type. Light + dark, WCAG AA.
 - Privacy-first: the only off-device call is the hostname greencheck (disclosed
   in [PRIVACY.md](PRIVACY.md)).
+- Settings and caches go in `chrome.storage.local`, never `chrome.storage.sync`:
+  with Chrome sync on, sync storage is copied to the user's Google account, and
+  PRIVACY.md says stored data is never uploaded. Pinned by
+  `tests/settings.test.ts`.
 - Scoring thresholds live in `src/core/constants.ts`, pinned by
   `tests/calibration.test.ts`.
