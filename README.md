@@ -1,54 +1,71 @@
+<img src="public/icons/icon128.png" alt="" width="80" height="80">
+
 # PageLens
 
-[![CI](https://github.com/JarlLyng/PageLens/actions/workflows/ci.yml/badge.svg)](https://github.com/JarlLyng/PageLens/actions/workflows/ci.yml)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/mkajolhhjdlpmjlgdfnmbhfpbbeebgja?label=Chrome%20Web%20Store)](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+See the carbon footprint of any web page, an actionable A–F Eco Score, right in your browser.
 
-> See the carbon footprint of any web page — an actionable A–F Eco Score, right
-> in your browser.
+<!-- IAMJARL README store block for PageLens (en). Generated from apps.json, v1.34.0. Do not edit. -->
+<p>
+  <a href="https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja?utm_source=github"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.34.0/badges/chrome-web-store-border.png">
+    <img src="https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.34.0/badges/chrome-web-store.png" alt="Available in the Chrome Web Store" width="192" height="58">
+  </picture></a>
+  <br>
+  Free · <a href="https://pagelens.iamjarl.com">pagelens.iamjarl.com</a>
+</p>
 
-PageLens is a Chrome extension (Manifest V3) that estimates the digital carbon
-footprint of the page you're viewing and turns it into a simple sustainability
-score with concrete recommendations. It's built for developers, designers,
-agencies and sustainability teams who want to make the web lighter.
+<p>
+  <img src="store-assets/screenshot-1-1280x800.png" alt="See any page's carbon footprint. The PageLens popup grading a page A, 86 out of 100, at 0.24 g of CO₂ per view on a green host, with its page weight and a fix to make first." width="640">
+</p>
 
-🧩 **[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/pagelens/mkajolhhjdlpmjlgdfnmbhfpbbeebgja)** · 🌐 **[pagelens.iamjarl.com](https://pagelens.iamjarl.com)**
+PageLens takes the bytes your browser recorded while loading the page you're on and estimates the CO₂ of one view with [CO2.js](https://www.thegreenwebfoundation.org/co2-js/) and the Sustainable Web Design model. It asks [The Green Web Foundation](https://www.thegreenwebfoundation.org/) whether the site's host runs on green energy, then gives the page an A–F Eco Score and a list of what to fix first, such as oversized images or heavy JavaScript. It's an estimate from an open model, not a measurement, made for developers, designers and sustainability teams who want lighter pages. The page is analyzed in your browser, and the only thing about it that leaves is its hostname, for the green-hosting check.
 
-![PageLens popup showing an Eco Score, carbon estimate, green-hosting status and page-weight breakdown](store-assets/screenshot-1-1280x800.png)
+## For developers
 
-## Features
+<p>
+  <a href="https://madebyhuman.iamjarl.com"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-white.svg">
+    <img src="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" alt="Co-created with AI" width="120" height="40"></picture></a>
+  <a href="https://github.com/JarlLyng/PageLens/actions/workflows/ci.yml"><img src="https://github.com/JarlLyng/PageLens/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+</p>
 
-- **Eco Score** — one 0–100 score, graded A–F, blending carbon, page weight,
+PageLens is a Chrome extension (Manifest V3). This half covers what it does in
+detail, how to build and run it, how it is put together, and how to contribute.
+
+### Features
+
+- **Eco Score:** one 0–100 score, graded A–F, blending carbon, page weight,
   green hosting and best practices.
-- **Carbon estimate** — grams of CO₂ per view plus a configurable yearly
-  projection, via [CO2.js](https://www.thegreenwebfoundation.org/co2-js/)
+- **Carbon estimate:** grams of CO₂ per view plus a yearly projection from the
+  monthly visits you set, via [CO2.js](https://www.thegreenwebfoundation.org/co2-js/)
   (Sustainable Web Design model).
-- **Green hosting** — whether the site runs on green energy, via
+- **Green hosting:** whether the site runs on green energy, via
   [The Green Web Foundation](https://www.thegreenwebfoundation.org/).
-- **Page-weight breakdown** — transferred bytes by type (HTML, JS, CSS, images,
+- **Page-weight breakdown:** transferred bytes by type (HTML, JS, CSS, images,
   fonts, video) and third-party share.
-- **Recommendations** — a prioritized list of what to fix first.
-- **Deep scan (opt-in)** — a DevTools-Protocol scan for exact transferred bytes
+- **Recommendations:** a prioritized list of what to fix first.
+- **Deep scan (opt-in, dev build):** a DevTools-Protocol scan for exact transferred bytes
   and real unused JavaScript & CSS.
 
 PageLens gives an **actionable estimate, not an exact measurement**, and is
-transparent about how the score is calculated — see the in-popup Methodology and
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+open about how the score is calculated: see "How this is calculated" in the
+popup and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## How it works
+### How it works
 
-1. **Measure** — reads the page's transferred bytes via the browser's Resource
+1. **Measure:** reads the page's transferred bytes via the browser's Resource
    Timing API.
-2. **Estimate** — feeds those bytes to CO2.js, adjusted for green hosting.
-3. **Score & advise** — turns the result into an A–F Eco Score with a
+2. **Estimate:** feeds those bytes to CO2.js, adjusted for green hosting.
+3. **Score & advise:** turns the result into an A–F Eco Score with a
    plain-language list of improvements.
 
 The **quick scan** needs no special permissions. The optional **deep scan**
 attaches `chrome.debugger` and reloads the page to measure exact bytes and real
-unused code — so it shows Chrome's debugger banner and is a dev-build feature
-(the published Web Store build omits it for faster review).
+unused code. It shows Chrome's debugger banner, so it is a dev-build feature:
+the published Web Store build omits it for faster review.
 
-## Getting started
+### Getting started
 
 Requires **Node 24** (see [`.nvmrc`](.nvmrc)).
 
@@ -64,7 +81,7 @@ npm run format  # prettier --write
 **Load it in Chrome:** open `chrome://extensions`, enable **Developer mode**,
 click **Load unpacked**, and select the `dist/` folder.
 
-## Project structure
+### Project structure
 
 ```
 src/
@@ -80,10 +97,11 @@ docs/            Architecture & Chrome Web Store guides
 scripts/         Dependency-free icon generator
 ```
 
-The analysis logic in `src/core/` is deliberately pure — no `chrome.*` or DOM
-access — which keeps it fully unit-testable. Chrome APIs live only at the edges.
+The analysis logic in `src/core/` is deliberately pure, with no `chrome.*` or
+DOM access, which keeps it fully unit-testable. Chrome APIs live only at the
+edges.
 
-## Tech stack
+### Tech stack
 
 React · TypeScript · Vite · [`@crxjs/vite-plugin`](https://crxjs.dev/) ·
 Tailwind CSS · Chrome MV3 · CO2.js · Green Web Foundation API
@@ -91,14 +109,14 @@ Tailwind CSS · Chrome MV3 · CO2.js · Green Web Foundation API
 Styling uses the [iamjarl-design](https://github.com/JarlLyng/iamjarl-design)
 token system, mapped onto Tailwind and auto-switching light/dark.
 
-## Quality
+### Quality
 
 Every push and PR runs lint, format check, type-check, unit tests, and a
 production build via [CI](.github/workflows/ci.yml). The Eco Score thresholds
 live in `src/core/constants.ts` and are pinned by
 [`tests/calibration.test.ts`](tests/calibration.test.ts).
 
-## Publishing
+### Publishing
 
 The published build omits the `debugger` permission:
 
@@ -110,29 +128,18 @@ See [docs/chrome-store-listing.md](docs/chrome-store-listing.md) for the full
 release process and [PRIVACY.md](PRIVACY.md) /
 [the hosted policy](https://pagelens.iamjarl.com/privacy.html).
 
-## Feedback & support
+### Feedback & support
 
 Email **support@iamjarl.com**, or use **Send feedback** at the bottom of the
 popup, which fills in your version. Bug reports and ideas are just as welcome as
 [GitHub issues](https://github.com/JarlLyng/PageLens/issues).
 
-## Contributing
+### Contributing
 
-Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and the
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) and the
 [Code of Conduct](CODE_OF_CONDUCT.md). For security issues, see
 [SECURITY.md](SECURITY.md).
 
-## License
+### License
 
 [MIT](LICENSE) © IAMJARL
-
----
-
-PageLens was co-created with AI, guided by a human.
-
-<a href="https://madebyhuman.iamjarl.com/badges">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" />
-    <img alt="Co-created with AI — madebyhuman.iamjarl.com" src="https://madebyhuman.iamjarl.com/badges/co-created-white.svg" width="220" />
-  </picture>
-</a>
