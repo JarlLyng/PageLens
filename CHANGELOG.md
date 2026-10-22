@@ -4,7 +4,7 @@ All notable changes to PageLens are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.1] - 2026-10-22
 
 ### Fixed
 
@@ -13,6 +13,11 @@ All notable changes to PageLens are documented here. The format is based on
   Chrome sync on, Chrome copied that one number to your Google account. The
   update moves your value to local storage and deletes the synced copy. If you
   use PageLens in several Chrome profiles, each one now keeps its own value.
+
+### Internal
+
+- Dependency housekeeping: design system 1.32.1, tldts 7.4.18,
+  `@crxjs/vite-plugin` 3.0.0, Vite 7.3.7, and newer build and test tooling.
 
 ## [1.2.0] - 2026-10-08
 
