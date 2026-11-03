@@ -1,181 +1,217 @@
-# PageLens — Architecture & Implementation Plan
+# PageLens — Architecture
 
-A Chrome MV3 extension that estimates the carbon footprint of the current page and
-turns it into an actionable A–F sustainability score.
+How the extension is built, as it is in the code today. A Chrome MV3 extension
+that estimates the carbon footprint of the current page and turns it into an
+A–F Eco Score with recommendations.
 
-> **Status:** This began as the implementation plan and remains the reference for
-> the design rationale. Both tiers are now built and shipped — the quick scan
-> (Performance API) **and** the opt-in deep scan (`chrome.debugger` for exact
-> bytes + real unused JS/CSS). Remaining ideas below (history/compare, PDF
-> export) are tracked as GitHub issues.
-
----
-
-## 1. The core architectural decision: how do we capture transferred bytes?
-
-Everything downstream (weight, CO₂, score, recommendations) depends on this. Three options:
-
-| Approach                                       | Byte accuracy                                                                             | Permission cost                                                      | Needs reload                        | Cross-origin         |
-| ---------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ----------------------------------- | -------------------- |
-| **PerformanceResourceTiming** (content script) | Good for same-origin & TAO-enabled hosts; `transferSize` is **0** for opaque cross-origin | `activeTab` + `scripting` only — no scary UI                         | No — reads already-loaded resources | blind spot (0 bytes) |
-| **`chrome.debugger` / CDP `Network` domain**   | Best — real `encodedDataLength` per response, headers, compression                        | `debugger` → shows a **"PageLens is debugging this browser"** banner | Yes — must attach before load       | full visibility      |
-| **`chrome.webRequest`**                        | Poor — MV3 gives no reliable encoded sizes                                                | `webRequest` + broad host perms                                      | No                                  | headers only         |
-
-**Decision: two-tier capture.**
-
-- **Tier 1 — Quick scan (default, MVP):** `PerformanceResourceTiming` via `chrome.scripting.executeScript`. Zero friction, no permission banner, instant. Handles the common case well.
-  - Mitigate the cross-origin `transferSize === 0` gap: fall back to `encodedBodySize`, then `decodedBodySize`, and **flag the result as "estimated"** in the UI so we never present a false-precise number.
-- **Tier 2 — Deep scan (post-MVP, opt-in):** attach `chrome.debugger`, reload the tab, capture the full `Network` + `Coverage` domains. This is the _only_ way to truly measure **unused JS/CSS** and exact transferred bytes. Gated behind an explicit "Run accurate scan (reloads page)" button.
-
-This staging lets the MVP ship without the debugger permission while keeping the accurate path on the roadmap. It's also honest — we label estimates as estimates.
+Numbers that tune the result (score thresholds, rule limits, cache lifetime)
+are not repeated here: they live in
+[`src/core/constants.ts`](../src/core/constants.ts), and the grade
+distribution they produce is pinned by
+[`tests/calibration.test.ts`](../tests/calibration.test.ts).
 
 ---
 
-## 2. Component topology (MV3)
+## 1. How bytes are measured: two scans
+
+Everything else (weight, CO₂, score, recommendations) depends on how many bytes
+the page transferred. The browser offers three ways to find out:
+
+| Approach                                  | Byte accuracy                                                                                   | Permission cost                                                       | Needs reload |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------ |
+| **PerformanceResourceTiming** (injected)  | Good for same-origin and Timing-Allow-Origin hosts; `transferSize` is 0 for opaque cross-origin | `activeTab` + `scripting`, no banner                                  | No           |
+| **`chrome.debugger`** (DevTools Protocol) | Exact: real transferred bytes per response, plus JS and CSS coverage                            | `debugger`, which shows a "PageLens is debugging this browser" banner | Yes          |
+| **`chrome.webRequest`**                   | Poor: MV3 gives no reliable encoded sizes                                                       | `webRequest` + broad host permissions                                 | No           |
+
+PageLens uses the first two:
+
+- **Quick scan** (default). `chrome.scripting.executeScript` runs
+  [`collectPageResources`](../src/content/collector.ts) in the page, which reads
+  the resource and navigation timing entries and counts `<video autoplay>`. No
+  banner, no reload. Where a cross-origin `transferSize` is 0, the bytes fall
+  back to `encodedBodySize`, then `decodedBodySize`, and are counted as
+  **estimated** (`resolveBytes` in `core/classify.ts`); the popup says how much
+  of the total that is.
+- **Deep scan** (opt-in, full build only).
+  [`background/deep-scan.ts`](../src/background/deep-scan.ts) attaches the
+  debugger, enables `Network`, `Page`, `Profiler` (precise coverage), `DOM` and
+  `CSS` (rule-usage tracking), reloads the tab ignoring the cache, waits for
+  the load event plus a short settle, then reads exact bytes per response and
+  the JS and CSS coverage, and detaches. This is the only scan that measures
+  **unused JS and CSS**.
+
+The published store build leaves the deep scan out entirely: see section 6.
+
+---
+
+## 2. Components
 
 ```
-┌─────────────┐   ANALYZE(tabId)   ┌──────────────────────┐
-│   Popup     │ ─────────────────▶ │  Service Worker (bg)  │
-│ (React app) │ ◀───────────────── │  - GWF greencheck     │
-└─────────────┘   AnalysisResult   │  - storage / history  │
-      │                            │  - (later) CDP scans  │
-      │ chrome.scripting                     │
-      ▼                                       │ fetch()
-┌─────────────┐                     ┌─────────▼──────────┐
-│  Collector  │  raw entries        │ Green Web Found. API│
-│ (injected)  │ ───────────────────▶ (cached per-domain) │
-└─────────────┘                     └─────────────────────┘
+┌─────────────┐  ANALYZE / DEEP_SCAN  ┌────────────────────────────┐
+│   Popup     │ ────────────────────▶ │  Service worker            │
+│ (React app) │ ◀──────────────────── │  - runs core/ pipeline      │
+└─────────────┘   AnalysisSnapshot    │  - Green Web Foundation     │
+                                      │  - deep scan (full build)   │
+                                      └──────┬──────────────┬──────┘
+                       chrome.scripting      │              │ fetch (hostname only)
+                                             ▼              ▼
+                                   ┌─────────────┐  ┌───────────────────────┐
+                                   │  Collector  │  │ GWF greencheck API    │
+                                   │ (injected)  │  │ (cached per hostname) │
+                                   └─────────────┘  └───────────────────────┘
 ```
 
 **Flow:**
 
-1. Toolbar click → popup opens, requests analysis for the active tab.
-2. Service worker injects the collector (`activeTab` grant), receives raw `PerformanceResourceTiming[]` + `PerformanceNavigationTiming`.
-3. Worker runs the pure `core/` pipeline: classify → aggregate → GWF lookup (cached) → CO₂ (CO2.js) → score → recommendations.
-4. Result cached in `chrome.storage.session` (per tab) + appended to history in `chrome.storage.local`.
-5. Popup renders.
+1. The toolbar click opens the popup.
+   [`useAnalysis`](../src/popup/hooks/useAnalysis.ts) finds the active tab,
+   refuses browser-internal pages, and sends `ANALYZE` (or `DEEP_SCAN`) to the
+   service worker ([`lib/messaging.ts`](../src/lib/messaging.ts)).
+2. The [service worker](../src/background/service-worker.ts) gets the raw
+   capture from the collector or the deep scan.
+3. Both feed one pipeline, `buildSnapshot`: classify → aggregate →
+   recommendations → green-hosting check → CO₂ → Eco Score.
+4. The worker returns an `AnalysisSnapshot` and the popup renders it.
 
-**Why the worker, not the popup, owns compute:** the popup can be closed at any moment (killing in-flight `fetch`/state), GWF results should be cached across popup opens, and history/compare features need a persistent home. Core logic stays framework-free so it's equally callable from either context and unit-testable.
+Nothing about the scan is stored. A result lives in the popup until it closes;
+there is no history.
+
+**Why the worker owns the work:** the popup can close at any moment, which
+would kill an in-flight `fetch` or a deep scan, and the debugger is driven from
+the background. The analysis itself is framework-free, so it is unit-tested
+without a browser.
 
 ---
 
 ## 3. Directory layout
 
 ```
-pagelens/
-├── manifest.config.ts          # MV3 manifest (via @crxjs/vite-plugin)
-├── vite.config.ts
-├── src/
-│   ├── popup/                   # React UI, entry: popup.html
-│   │   ├── App.tsx
-│   │   ├── components/
-│   │   │   ├── EcoScoreCard.tsx      # A–F badge + 0–100 gauge
-│   │   │   ├── CarbonEstimate.tsx    # g/view + yearly (configurable visits)
-│   │   │   ├── HostingBadge.tsx      # ✅ / ⚪ / ❌
-│   │   │   ├── ResourceChart.tsx     # transferred-data breakdown
-│   │   │   ├── Recommendations.tsx   # prioritized expandable list
-│   │   │   └── Methodology.tsx
-│   │   └── hooks/useAnalysis.ts
-│   ├── background/service-worker.ts
-│   ├── content/collector.ts    # PerformanceResourceTiming harvest
-│   ├── core/                   # PURE, framework-free, vitest-covered
-│   │   ├── types.ts            # ResourceEntry, Category, AnalysisResult…
-│   │   ├── classify.ts         # entry → category + first/third-party
-│   │   ├── aggregate.ts        # bytes per category
-│   │   ├── carbon.ts           # CO2.js (SWD model) wrapper
-│   │   ├── score.ts            # sub-scores → 0–100 → A–F
-│   │   ├── recommendations.ts  # rule engine
-│   │   └── constants.ts        # benchmarks, thresholds, weights
-│   ├── lib/
-│   │   ├── messaging.ts        # typed message protocol
-│   │   ├── greenweb.ts         # GWF API client + cache
-│   │   └── storage.ts          # chrome.storage wrappers + history
-│   └── components/ui/          # shadcn/ui primitives
-└── tests/                      # unit tests for core/
+manifest.config.ts         MV3 manifest (via @crxjs/vite-plugin)
+vite.config.ts             build; __STORE_BUILD__ flag
+src/
+  core/                    pure, framework-free, unit-tested
+    types.ts               raw capture, classified resources, snapshot
+    classify.ts            category, first/third party, byte fallback
+    aggregate.ts           bytes and counts per category, third-party share
+    carbon.ts              CO2.js (SWD model)
+    score.ts               sub-scores → 0–100 → A–F
+    recommendations.ts     rule engine + best-practices sub-score
+    coverage.ts            JS and CSS coverage → unused bytes (deep scan)
+    constants.ts           thresholds, weights, limits
+    format.ts              bytes, grams, percentages
+  background/
+    service-worker.ts      message handler, shared pipeline
+    deep-scan.ts           chrome.debugger / DevTools Protocol scan
+  content/collector.ts     injected Performance-timing harvest
+  lib/
+    messaging.ts           typed popup ↔ worker protocol
+    greenweb.ts            Green Web Foundation client + cache
+    settings.ts            monthly visits, in storage.local
+    format.ts              re-export of core/format for the UI
+  popup/                   React UI (index.html, App.tsx, components/, hooks/)
+tests/                     vitest suites
+scripts/
+  generate-icons.mjs       dependency-free icon generator
+  cws.mjs                  Chrome Web Store API publishing (used by CI)
+site/                      marketing site, its own npm project
 ```
 
 ---
 
-## 4. Resource classification
+## 4. Classification and weight
 
-- **Category** from `initiatorType` + URL/extension + MIME hints: `html | css | js | image | font | video | other`.
-- **First vs third party**: compare each resource's registrable domain (eTLD+1) to the page's. Bundle **`tldts`** for correct public-suffix handling (don't hand-roll — `foo.co.uk` breaks naïve `split('.')`).
-- Third-party bytes and count are tracked as a cross-cutting dimension (a JS file can be both "js" and "third-party").
-
----
-
-## 5. Carbon model (CO2.js)
-
-- Use CO2.js from The Green Web Foundation, **Sustainable Web Design (SWD) model** (current default; more transparent than the legacy 1-byte model).
-- Feed total transferred bytes; pass the **green-hosting boolean** so the model applies the correct grid intensity for hosting.
-- Outputs: **g CO₂ / page view**. Yearly = `gPerView × monthlyVisits × 12`, with `monthlyVisits` a user setting (default e.g. 10,000) persisted in storage.
-- Surface a first-visit vs return-visit note (caching changes real-world transfer) in Methodology — MVP scores the measured (cold-ish) load.
-
----
-
-## 6. Scoring model (concrete)
-
-**Eco Score (0–100)** = weighted sum of four sub-scores:
-
-| Sub-score      | Weight | 100 pts at | 0 pts at  | Curve                                |
-| -------------- | ------ | ---------- | --------- | ------------------------------------ |
-| Carbon / view  | 40%    | ≤ 0.1 g    | ≥ 3.0 g   | log                                  |
-| Page weight    | 30%    | ≤ 500 KB   | ≥ 5 MB    | log                                  |
-| Green hosting  | 15%    | green      | not green | green=100 / unknown=50 / not-green=0 |
-| Best practices | 15%    | no issues  | —         | 100 minus per-issue deductions       |
-
-**Grade:** A ≥90 · B 80–89 · C 70–79 · D 60–69 · E 50–59 · F <50.
-
-Benchmarks anchored to HTTP Archive medians (~2.2 MB desktop) so a "typical" site lands around C. All thresholds live in `core/constants.ts` for easy tuning.
+- **Category** ([`core/classify.ts`](../src/core/classify.ts)): from the file
+  extension first, then `initiatorType`: `html | css | js | image | font |
+video | other`. The deep scan maps DevTools resource types to the same
+  initiator names, so one classifier serves both scans.
+- **First vs third party:** each resource's registrable domain against the
+  page's, with **`tldts`** and the public suffix list's private section on
+  (`allowPrivateDomains`), so two accounts on `github.io` or `vercel.app` count
+  as different sites.
+- **Weight** ([`core/aggregate.ts`](../src/core/aggregate.ts)): the main
+  document comes from the navigation entry and counts as `html`; third-party
+  bytes and count are tracked across categories (a script can be both `js` and
+  third party); estimated bytes are summed separately.
 
 ---
 
-## 7. Performance insights & recommendations
+## 5. Carbon, score and recommendations
 
-Rule engine — each rule: `{ id, detect(analysis) → boolean, impact: high|medium|low, savingEstimate?, title, detail, category }`.
+- **Carbon** ([`core/carbon.ts`](../src/core/carbon.ts)): CO2.js, Sustainable
+  Web Design model, per byte, on the total transferred bytes. Only a confirmed
+  green host takes the green path; unknown counts as not green. Yearly =
+  grams per view × monthly visits × 12, where monthly visits is the user's
+  setting.
+- **Eco Score** ([`core/score.ts`](../src/core/score.ts)): a weighted sum of
+  four sub-scores, each 0–100:
 
-| Signal                        | Detectable in Tier 1? | Notes                                        |
-| ----------------------------- | --------------------- | -------------------------------------------- |
-| Oversized images              | ✅                    | large single image transfers vs threshold    |
-| Large JS bundles              | ✅                    | proxy for "unused JS"                        |
-| **Unused JS/CSS %**           | ❌ Tier 2 only        | needs CDP `Coverage` — don't fake it in MVP  |
-| Excessive third-party scripts | ✅                    | count/bytes of 3p js                         |
-| Large fonts                   | ✅                    | font bytes + count                           |
-| Autoplay video                | ⚠️ partial            | collector inspects `<video autoplay>` in DOM |
-| Large CSS bundles             | ✅                    | css bytes threshold                          |
+  | Sub-score      | Weight | How                                                            |
+  | -------------- | ------ | -------------------------------------------------------------- |
+  | Carbon / view  | 40%    | log scale between `CARBON_BEST_G` and `CARBON_WORST_G`         |
+  | Page weight    | 30%    | log scale between `WEIGHT_BEST_BYTES` and `WEIGHT_WORST_BYTES` |
+  | Green hosting  | 15%    | green 100 · unknown 50 · not green 0                           |
+  | Best practices | 15%    | 100 minus a deduction per recommendation, by impact            |
 
-Recommendations sort by `impact` then estimated CO₂ saving. Each renders as an expandable row (title + why + how).
+  **Grade:** A ≥ 90 · B ≥ 80 · C ≥ 70 · D ≥ 60 · E ≥ 50 · F below.
 
-**Honesty rule:** any feature the current tier can't truly measure is either hidden or clearly labeled an estimate. No fabricated precision.
+- **Recommendations**
+  ([`core/recommendations.ts`](../src/core/recommendations.ts)): one rule per
+  finding, each returning a recommendation or nothing, sorted by impact and
+  then by bytes saved:
+
+  | Rule                    | Scan      |
+  | ----------------------- | --------- |
+  | `oversized-images`      | both      |
+  | `animated-gif`          | both      |
+  | `large-js`              | both      |
+  | `excessive-third-party` | both      |
+  | `large-fonts`           | both      |
+  | `autoplay-video`        | both      |
+  | `large-css`             | both      |
+  | `unused-js`             | deep only |
+  | `unused-css`            | deep only |
+
+**Honesty rule:** what a scan cannot measure is not shown as if it could. The
+quick scan never reports unused JS or CSS, and estimated bytes are labelled.
 
 ---
 
-## 8. Manifest V3 essentials
+## 6. Manifest and builds
 
-- `manifest_version: 3`, `action` with popup, `background.service_worker` (module type).
-- **Permissions:** `activeTab`, `scripting`, `storage`. (`debugger` added only when Tier 2 ships.)
-- **host_permissions:** `https://api.thegreenwebfoundation.org/*` for the greencheck call.
-- Build with **`@crxjs/vite-plugin`** — handles MV3 multi-entry (popup + worker + content), HMR, and manifest generation cleanly with Vite.
-
----
-
-## 9. Build order (recommended increments)
-
-1. **Skeleton** — Vite + React + TS + Tailwind + crxjs; extension loads, popup opens, reads active tab URL.
-2. **Capture + classify** — collector + `core/classify` + `core/aggregate`; show raw weight breakdown.
-3. **Carbon + hosting** — CO2.js wrapper + GWF client (+ cache); Eco Score + grade.
-4. **Recommendations** — rule engine + UI.
-5. **Polish** — pie chart, Methodology, visits setting, empty/error/loading states.
-6. **Nice-to-have** — history & compare, Tier 2 CDP deep scan, PDF export.
-
-Ship 1–5 as MVP.
+- MV3, an `action` popup, a module service worker
+  ([`manifest.config.ts`](../manifest.config.ts)).
+- **Permissions:** `activeTab`, `scripting`, `storage`, plus `debugger` in the
+  full build only.
+- **Host permission:** `https://api.thegreenwebfoundation.org/*`, for the
+  greencheck. It is the only request that leaves the device, and it sends the
+  hostname only.
+- **Two builds** from one source, switched by `PAGELENS_STORE=1`:
+  - `npm run build` → `dist/`: the full extension, deep scan included.
+  - `npm run package:store` → `dist-store/` and `pagelens-store.zip`: no
+    `debugger` permission, and `__STORE_BUILD__` makes the deep-scan import
+    unreachable, so the bundler drops that code.
 
 ---
 
-## 10. Key risks / open decisions
+## 7. Storage
 
-- **Cross-origin `transferSize = 0`** — biggest accuracy risk in Tier 1. Mitigation: fallback fields + "estimated" labeling. Revisit with Tier 2.
-- **"Unused JS" is unmeasurable without CDP** — MVP substitutes "large bundle" heuristics and is explicit about it.
-- **GWF API rate/availability** — cache per registrable domain in `storage.local` with a TTL; degrade to "Unknown ⚪" on failure.
-- **Score calibration** — initial thresholds are best-guess; validate against a sample of real sites and tune `constants.ts`.
-- **Single-load snapshot** — no SPA route-change tracking in MVP; note as a limitation.
+All in `chrome.storage.local`, on the device:
+
+- `monthlyVisits`, the setting for the yearly projection
+  ([`lib/settings.ts`](../src/lib/settings.ts)). Never `storage.sync`: with
+  Chrome sync on, that is copied to the user's Google account. Up to 1.2.0 it
+  was in `storage.sync`; the worker moves it on install and update.
+- `gwf:<hostname>`, the greencheck result, for `GWF_CACHE_TTL_MS`
+  ([`lib/greenweb.ts`](../src/lib/greenweb.ts)). A failed lookup is
+  "unknown" and is not cached.
+
+---
+
+## 8. Limits
+
+- **Cross-origin bytes in the quick scan** are estimated where the server sends
+  no Timing-Allow-Origin. The deep scan measures them exactly.
+- **One load, one snapshot.** A single-page app's route changes are not
+  re-scanned (#8).
+- **No history or export yet.** Compare across visits (#5) and PDF export (#6)
+  are on the roadmap.

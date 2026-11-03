@@ -18,13 +18,15 @@ Load the extension: open `chrome://extensions`, enable **Developer mode**, click
 ## Before you open a PR
 
 ```bash
-npm run typecheck   # tsc --noEmit
-npm test            # unit tests (vitest)
-npm run build       # production build
-npm run format      # apply Prettier
+npm run lint          # eslint
+npm run format        # apply Prettier (CI runs format:check)
+npm run typecheck     # tsc --noEmit
+npm test              # unit tests (vitest)
+npm run build         # production build
 ```
 
-CI runs type-check, tests, and build on every PR — they must pass.
+CI runs all five on every PR (lint, format check, type-check, tests, build),
+and they must pass.
 
 ## Project conventions
 

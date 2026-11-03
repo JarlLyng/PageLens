@@ -8,8 +8,7 @@
 
 ## Checklist
 
-- [ ] `npm run lint`, `npm test`, and `npm run build` pass
+- [ ] `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test` and `npm run build` pass
 - [ ] No hardcoded colors/spacing/type — uses `iamjarl-design` tokens (if applicable)
 - [ ] No new tracking, accounts, or off-device data beyond the green-hosting check (product DNA)
 - [ ] Docs / CHANGELOG updated if behavior changed
-- [ ] No competitive-sensitive strategy added to this public repo (that goes in the private hub)

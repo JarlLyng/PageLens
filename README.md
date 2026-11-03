@@ -94,7 +94,7 @@ src/
 tests/           Vitest suites for core/ (incl. score calibration)
 site/            Marketing site (Vite + React) → pagelens.iamjarl.com
 docs/            Architecture & Chrome Web Store guides
-scripts/         Dependency-free icon generator
+scripts/         Icon generator and Chrome Web Store publishing (cws.mjs)
 ```
 
 The analysis logic in `src/core/` is deliberately pure, with no `chrome.*` or
@@ -124,7 +124,7 @@ The published build omits the `debugger` permission:
 npm run package:store   # → pagelens-store.zip from a debugger-free dist-store/
 ```
 
-See [docs/chrome-store-listing.md](docs/chrome-store-listing.md) for the full
+See [docs/RELEASING.md](docs/RELEASING.md) for the full
 release process and [PRIVACY.md](PRIVACY.md) /
 [the hosted policy](https://pagelens.iamjarl.com/privacy.html).
 
