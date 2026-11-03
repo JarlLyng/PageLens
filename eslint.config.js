@@ -6,6 +6,9 @@ import globals from 'globals'
 export default tseslint.config(
   {
     ignores: [
+      // Local, gitignored: Claude Code's git worktrees live here, and each is a
+      // full checkout that would be linted as part of this one.
+      '.claude',
       'dist',
       'dist-store',
       'site/dist',
